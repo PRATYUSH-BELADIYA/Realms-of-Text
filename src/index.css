@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+body{
+  margin: 0;
+  padding: 0;
+}
+/* Tailwind Custom (in globals.css or tailwind.config) */
+.hover\\:rotate-x-6:hover {
+  transform: rotateX(6deg);
+}
+.hover\\:rotate-y-6:hover {
+  transform: rotateY(6deg);
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
