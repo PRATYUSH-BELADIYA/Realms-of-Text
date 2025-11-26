@@ -55,6 +55,7 @@ const LOCATIONS = [
     { id: 'forest', name: 'Whispering Forest', type: 'danger', difficulty: 1, desc: 'Trees block the sun. Goblins lurk here.', boss: 'Broodmother Spider' },
     { id: 'cave', name: 'Crystal Cave', type: 'danger', difficulty: 3, desc: 'Dark and damp. Echoes of wolves and bears.', boss: 'Crystal Golem' },
     { id: 'dungeon', name: 'Shadow Dungeon', type: 'danger', difficulty: 5, desc: 'An ancient ruin filled with elite undead.', boss: 'Lich King' },
+    { id: 'mountain', name: 'Dragon Peak', type: 'danger', difficulty: 8, desc: 'The air is thin and hot. Dragons nest here.', boss: 'Infernal Dragon' }
 ];
 
 const ENCHANTMENTS = {
@@ -131,14 +132,26 @@ const ITEM_IMAGES = {
     'Slime Gel': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/91lysdtefdeihicf66m1ffng26t6',
     'Goblin Ear': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/6l6a5uvtirvnsw29f690r3xgsdw6',
     'Wolf Pelt': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/1o164zvz47wjskqrn1foawgfp5yz',
-    'Bone Dust': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/ozsod99iq2bg9hnihq68h5h9ghu6',
+    'Bone Dust': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/r1wrefouyeakykap24hx109zj0gn',
     'Orc Tusk': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mt1nwnd9gl0wjqv5emfnz2myr45b',
     'Dragon Scale': 'https://www.vhv.rs/dpng/d/440-4402283_dragon-scale-png-dragon-scales-transparent-png-png.png',
 
     // --- EVENT IMAGES (Optional) ---
     'shrine': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/tciv4rch0j897rk1youz516dzii1',
     'wagon': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/esccp5hm2c42xqfhcd6x5pxpeuk8',
-    'spring': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/wf5ym5cl4bvwbtlyqwhcp6pxjvz9'
+    'spring': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/wf5ym5cl4bvwbtlyqwhcp6pxjvz9',
+
+    'Epic Broodmother Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/sp7ftos2kx0lqn0tootnx54yzzim', // Looks like a green/poison dagger
+    'Epic Broodmother Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/0cx701mdaj9qli2gwb4yqjw1omri', // Placeholder (Paste a Green Armor URL here)
+
+    // CAVE BOSS (Crystal Golem)
+    'Epic Crystal Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/cunucufjqwi178302potmhf9pxhq', // Placeholder (Paste a Blue Crystal Sword URL here)
+    'Epic Crystal Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mxrujoen4jt5nojhmmqdchac2o0c', // Looks like shiny plate armor
+
+    // DUNGEON BOSS (Lich King)
+    'Epic Lich Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mlfs8jjvh5c9dir4ao3l626n2hde', // Looks like a dark staff/blade
+    'Epic Lich Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/95km2zmw05wsq2mkc0m8fv1hf8nm', // Looks like dark chainmail
+
 };
 
 const ENEMY_IMAGES = {
@@ -159,8 +172,8 @@ const ENEMY_IMAGES = {
 const CRAFTING_RECIPES = [
     { name: 'Health Potion', type: 'potion', cost: 10, ingredients: [{ name: 'Slime Gel', count: 2 }], result: 'potion' },
     { name: 'Mana Potion', type: 'potion', cost: 10, ingredients: [{ name: 'Bone Dust', count: 2 }], result: 'mana_potion' },
-    { name: 'Elixir of Strength', type: 'stat', cost: 300, ingredients: [{ name: 'Wolf Pelt', count: 3 }, { name: 'Orc Tusk', count: 1 }], result: 'dmg', bonus: 1, desc: 'Permanent +1 Damage' },
-    { name: 'Stoneskin Brew', type: 'stat', cost: 300, ingredients: [{ name: 'Slime Gel', count: 5 }, { name: 'Dragon Scale', count: 1 }], result: 'def', bonus: 1, desc: 'Permanent +1 Defense' },
+    { name: 'Elixir of Strength', type: 'stat', cost: 300, ingredients: [{ name: 'Wolf Pelt', count: 3 }, { name: 'Orc Tusk', count: 1 }], result: 'dmg', bonus: 5, desc: 'Permanent +5 Damage' },
+    { name: 'Stoneskin Brew', type: 'stat', cost: 300, ingredients: [{ name: 'Slime Gel', count: 5 }, { name: 'Dragon Scale', count: 1 }], result: 'def', bonus: 5, desc: 'Permanent +5 Defense' },
 ];
 
 const ENEMY_TYPES = [
@@ -213,6 +226,23 @@ const EXPLORATION_EVENTS = [
             { text: 'Bottle it', type: 'item_mana', chance: 1.0, result: 'You filled a bottle. (+1 Mana Potion)' }
         ]
     }
+];
+
+const TOWN_EVENTS = [
+    { text: "You help a merchant fix his cart.", reward: { type: 'gold', val: 20 }, msg: "He tips you 20 Gold." },
+    { text: "A pickpocket bumps into you!", reward: { type: 'lose_gold', val: 15 }, msg: "You lost 15 Gold!" },
+    { text: "You listen to rumors at the fountain.", reward: { type: 'xp', val: 10 }, msg: "You learned about the world. (+10 XP)" },
+    { text: "You find a lucky coin on the ground.", reward: { type: 'gold', val: 50 }, msg: "It's your lucky day! (+50 Gold)" },
+    { text: "A priest blesses you.", reward: { type: 'heal', val: 20 }, msg: "You feel refreshed. (+20 HP)" }
+];
+
+// NEW: Specific events for Wilderness (Forest, Cave, etc.)
+const WILD_EVENTS = [
+    { text: "You find an abandoned campfire.", reward: { type: 'item', val: 'potion' }, msg: "Someone left a Health Potion!" },
+    { text: "You step into a hunter's trap!", reward: { type: 'damage', val: 15 }, msg: "Ouch! You take 15 damage." },
+    { text: "You find a vein of rare ore.", reward: { type: 'gold', val: 40 }, msg: "You dig it out. (+40 Gold)" },
+    { text: "A wandering minstrel sings a song.", reward: { type: 'xp', val: 25 }, msg: "You feel inspired. (+25 XP)" },
+    { text: "You find a hidden fruit bush.", reward: { type: 'heal', val: 30 }, msg: "Delicious! (+30 HP)" }
 ];
 
 // --- Components ---
@@ -607,7 +637,7 @@ export default function App({ initialPlayer }) {
         if (mode === 'boss') {
             setEnemy({
                 name: location.boss,
-                level: player.level + 2,
+                level: player.level + 4,
                 maxHp: (player.level * 30) + 200,
                 hp: (player.level * 30) + 200,
                 damage: (player.level * 5) + 15,
@@ -763,32 +793,24 @@ export default function App({ initialPlayer }) {
 
         if (enemy.isBoss) {
             const isWeapon = Math.random() > 0.5;
-            const epicItem = {
-                name: isWeapon ? `Epic ${location.boss.split(' ')[0]} Blade` : `Epic ${location.boss.split(' ')[0]} Plate`,
-                value: 500,
-                count: 1,
-                rarity: 'epic',
-                type: 'misc'
-            };
-
             const slot = isWeapon ? 'weapon' : 'armor';
+            
+            // Create the item object
             const newEpic = {
-                name: epicItem.name,
+                name: isWeapon ? `Epic ${location.boss.split(' ')[0]} Blade` : `Epic ${location.boss.split(' ')[0]} Plate`,
                 level: player.level,
                 rarity: 'epic',
                 type: slot,
-                [slot === 'weapon' ? 'damage' : 'defense']: (slot === 'weapon' ? 10 : 5) + (player.level * 2)
+                [slot === 'weapon' ? 'damage' : 'defense']: (slot === 'weapon' ? 10 : 5) + (player.level * 2),
+                value: 500,  // Add value so it can be sold
+                count: 1     // Add count so it works in inventory
             };
 
-            dropMsg += ` 🟣 BOSS DROP: Equipped ${newEpic.name}!`;
+            // CHANGE: Message says "Found" instead of "Equipped"
+            dropMsg += ` 🟣 BOSS DROP: Found ${newEpic.name}!`;
 
-            setPlayer(prev => ({
-                ...prev,
-                equipment: {
-                    ...prev.equipment,
-                    [slot]: newEpic
-                }
-            }));
+            // CHANGE: Push to inventory array instead of setting player equipment immediately
+            newInventory.push(newEpic); 
         }
 
         // Update Zone Progress (Only for exploration)
@@ -1110,22 +1132,75 @@ export default function App({ initialPlayer }) {
     };
 
     const explore = () => {
+        // 1. TOWN EXPLORATION (Safe, non-combat events)
         if (location.id === 'town') {
-            if (Math.random() < 0.7) {
-                addLog("The town is busy today.", "info");
-            } else addLog("A peaceful day in the market.", "info");
+            const roll = Math.random();
+            
+            if (roll < 0.3) {
+                // 30% Chance for a specific town event
+                const event = TOWN_EVENTS[Math.floor(Math.random() * TOWN_EVENTS.length)];
+                
+                // Apply Rewards/Penalties
+                setPlayer(p => {
+                    let ns = { ...p };
+                    if (event.reward.type === 'gold') ns.gold += event.reward.val;
+                    if (event.reward.type === 'lose_gold') ns.gold = Math.max(0, ns.gold - event.reward.val);
+                    if (event.reward.type === 'xp') ns.xp += event.reward.val;
+                    if (event.reward.type === 'heal') ns.hp = Math.min(totalMaxHp, ns.hp + event.reward.val);
+                    return ns;
+                });
+
+                addLog(event.text + " " + event.msg, event.reward.type === 'lose_gold' || event.reward.type === 'damage' ? 'danger' : 'success');
+                if (event.reward.type === 'gold') spawnFloatingText(`+${event.reward.val} G`, 'gold');
+                
+            } else {
+                // 70% Chance for generic flavor text
+                const townFlavors = [
+                    "The blacksmith is hammering loudly today.",
+                    "Guards patrol the streets, eyeing you suspiciously.",
+                    "Children are playing tag near the tavern.",
+                    "The smell of fresh bread wafts from the bakery.",
+                    "A cat rubs against your leg then runs away."
+                ];
+                addLog(townFlavors[Math.floor(Math.random() * townFlavors.length)], "info");
+            }
             return;
         }
+
+        // 2. WILDERNESS EXPLORATION (Danger, Combat, Events)
         const roll = Math.random();
+
+        // 50% Chance: COMBAT
         if (roll < 0.5) {
             generateEnemy('normal');
-        } else if (roll < 0.8) {
+        } 
+        // 30% Chance: INTERACTIVE EVENT (The popup choices you already have)
+        else if (roll < 0.8) {
             triggerEvent();
-        } else {
-            const foundGold = Math.floor(Math.random() * 30) + 10;
-            setPlayer(p => ({ ...p, gold: p.gold + foundGold }));
-            addLog(`Found ${foundGold} gold.`, 'success');
-            spawnFloatingText(`+${foundGold} G`, 'gold');
+        } 
+        // 20% Chance: WILDERNESS FLAVOR EVENT (Instant small rewards/traps)
+        else {
+            const event = WILD_EVENTS[Math.floor(Math.random() * WILD_EVENTS.length)];
+            
+            setPlayer(p => {
+                let ns = { ...p };
+                if (event.reward.type === 'gold') ns.gold += event.reward.val;
+                if (event.reward.type === 'xp') ns.xp += event.reward.val;
+                if (event.reward.type === 'heal') ns.hp = Math.min(totalMaxHp, ns.hp + event.reward.val);
+                if (event.reward.type === 'damage') ns.hp = Math.max(0, ns.hp - event.reward.val);
+                if (event.reward.type === 'item') ns.potions++;
+                return ns;
+            });
+
+            addLog(event.text + " " + event.msg, event.reward.type === 'damage' ? 'danger' : 'success');
+            
+            // Visuals
+            if (event.reward.type === 'damage') {
+                triggerShake();
+                spawnFloatingText(`-${event.reward.val} HP`, 'damage');
+            } else if (event.reward.type === 'gold') {
+                spawnFloatingText(`+${event.reward.val} G`, 'gold');
+            }
         }
     };
 
@@ -1867,10 +1942,7 @@ export default function App({ initialPlayer }) {
                                         <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/gafv8hvlo9w6tqot95smu2pdbwef" alt="" className='w-10 h-10' />
                                         <span className="text-xs font-bold">Arena</span>
                                     </button>
-                                    {/* <button onClick={() => setGameState('PET_SANCTUARY')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <Cat className="w-6 h-6 text-pink-400 mb-1 group-hover:scale-110 transition-transform" />
-                                        <span className="text-xs font-bold">Sanctuary</span>
-                                    </button> */}
+                                    
                                     
                                 </div>
                             ) : (
