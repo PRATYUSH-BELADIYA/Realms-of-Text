@@ -7,6 +7,7 @@ import {
     Droplets, Cloud, Layers, Hexagon, Feather, Gem,
     Beer, Dices, Crown, AlertTriangle, HelpCircle, FlaskConical, Swords, Clock
 } from 'lucide-react';
+// Assuming 'supabase' and related functions are correctly imported from a sibling file.
 import { supabase, saveToCloud, loadFromCloud } from "../supabase";   // ADD THIS
 
 
@@ -14,12 +15,14 @@ import warrior from '../assets/warrior.png';
 import rogue from '../assets/rogue.png';
 import mage from '../assets/mage.png';
 
-import warrior_hover from '../assets/warrior_hover.png';
-import rogue_hover from '../assets/rouge_hover.png';
-import mage_hover from '../assets/mage_hover.png';
+// Import images/icons for classes (if they exist in your project)
+// import warrior_hover from '../assets/warrior_hover.png';
+// import rogue_hover from '../assets/rouge_hover.png';
+// import mage_hover from '../assets/mage_hover.png';
 
-// --- Game Data & Constants ---
+// --- Game Data & Constants (Extracted & Centralized) ---
 
+// All game data is defined here, making it easy to change game balance
 const CLASSES = {
     warrior: {
         id: 'warrior', name: 'Warrior', hpBonus: 50, manaBonus: 10, dmgBonus: 2, defBonus: 3, critChance: 0.05,
@@ -41,7 +44,7 @@ const CLASSES = {
     },
     mage: {
         id: 'mage', name: 'Mage', hpBonus: -10, manaBonus: 60, dmgBonus: 8, defBonus: -1, critChance: 0.10,
-        desc: 'Burst Magic Damage.', icon: '', image: mage,
+        desc: 'Burst Magic Damage.', icon: '🪄', image: mage,
         skills: [
             { id: 'bolt', name: 'Arcane Bolt', level: 1, cost: 0, cd: 0, dmgMult: 1.3, desc: 'Basic magic missile' },
             { id: 'fireball', name: 'Fireball', level: 3, cost: 25, cd: 3, dmgMult: 2.2, desc: 'High fire damage' },
@@ -96,7 +99,7 @@ const SHOP_ITEMS = [
 ];
 
 const ITEM_IMAGES = {
-    // --- CONSUMABLES ---
+    // --- POTIONS/ELIXIRS ---
     'Health Potion': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/tx66dzspb8v44e2jmu8re9kp7hlr',
     'Mana Potion': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/5h4wv0luygzm46240ufs47xsvsm5',
     'Elixir of Strength': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/8awohrxibxp5ro28pga69aylp3tx',
@@ -136,25 +139,38 @@ const ITEM_IMAGES = {
     'Orc Tusk': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mt1nwnd9gl0wjqv5emfnz2myr45b',
     'Dragon Scale': 'https://www.vhv.rs/dpng/d/440-4402283_dragon-scale-png-dragon-scales-transparent-png-png.png',
 
-    // --- EVENT IMAGES (Optional) ---
+    // --- EVENT IMAGES ---
     'shrine': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/tciv4rch0j897rk1youz516dzii1',
     'wagon': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/esccp5hm2c42xqfhcd6x5pxpeuk8',
     'spring': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/wf5ym5cl4bvwbtlyqwhcp6pxjvz9',
 
-    'Epic Broodmother Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/sp7ftos2kx0lqn0tootnx54yzzim', // Looks like a green/poison dagger
-    'Epic Broodmother Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/0cx701mdaj9qli2gwb4yqjw1omri', // Placeholder (Paste a Green Armor URL here)
+    // --- BOSS DROPS ---
+    'Epic Broodmother Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/sp7ftos2kx0lqn0tootnx54yzzim', 
+    'Epic Broodmother Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/0cx701mdaj9qli2gwb4yqjw1omri', 
+    'Epic Crystal Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/cunucufjqwi178302potmhf9pxhq', 
+    'Epic Crystal Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mxrujoen4jt5nojhmmqdchac2o0c', 
+    'Epic Lich Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mlfs8jjvh5c9dir4ao3l626n2hde', 
+    'Epic Lich Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/95km2zmw05wsq2mkc0m8fv1hf8nm', 
 
-    // CAVE BOSS (Crystal Golem)
-    'Epic Crystal Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/cunucufjqwi178302potmhf9pxhq', // Placeholder (Paste a Blue Crystal Sword URL here)
-    'Epic Crystal Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mxrujoen4jt5nojhmmqdchac2o0c', // Looks like shiny plate armor
-
-    // DUNGEON BOSS (Lich King)
-    'Epic Lich Blade': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/mlfs8jjvh5c9dir4ao3l626n2hde', // Looks like a dark staff/blade
-    'Epic Lich Plate': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/95km2zmw05wsq2mkc0m8fv1hf8nm', // Looks like dark chainmail
-
+    // --- TOWN ICONS ---
+    'market': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/rijfy4ijj5ypknyrcqj9wu69gij8',
+    'notice_board': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/9i4pgcumgp1mtx3idkne3zop8867',
+    'forge': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/luyt80v4tob11xjct02jlewi0m8s',
+    'tavern': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/3llbtwwc9ihak8hh6xc1wqp9ef0s',
+    'alchemist': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/d9aa4abhlup1ehdzbic4b3xanr2g',
+    'arena': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/gafv8hvlo9w6tqot95smu2pdbwef',
+    'hammer': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/uj9bs094jggo7sprmkkahlcdeunx',
+    
+    // --- BACKGROUNDS (FANTASY THEMED) ---
+    'town_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/a0r571c35w78i8q28q0i99a0937n', // Medieval Town
+    'forest_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/t5l7r42t9v07k8z58t9t6r912v6q', // Deep Forest
+    'cave_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/9t0n7f3w6x44k9p8z0z3v4f79s4g', // Crystal Cave
+    'dungeon_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/v1k2l3z4m5n6o7p8q9r0s1t2u3v4', // Shadow Dungeon
+    'mountain_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/x1y2z3a4b5c6d7e8f9g0h1i2j3k4', // Dragon Mountain
 };
 
 const ENEMY_IMAGES = {
+    // ... (unchanged large dictionary of image URLs)
     // --- STANDARD ENEMIES ---
     'Slime': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/pj3rtwojgwg95g8oz0po6pn86bqs',
     'Goblin': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/jw2aw4843cw4y5uad6dkdbkd0glr',
@@ -167,6 +183,7 @@ const ENEMY_IMAGES = {
     'Broodmother Spider': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/t2lgk7buvqax8qh6x6qosfj935vj',
     'Crystal Golem': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/rfctdbxawpaq90cxc1fp7c5tutet',
     'Lich King': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/iqyxi21lsvpjw763z0uokrnqew2y',
+    'Siege Captain': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/q3x0v6d9w2y1z8j5e7f4c2b9a1s0'
 };
 
 const CRAFTING_RECIPES = [
@@ -236,7 +253,6 @@ const TOWN_EVENTS = [
     { text: "A priest blesses you.", reward: { type: 'heal', val: 20 }, msg: "You feel refreshed. (+20 HP)" }
 ];
 
-// NEW: Specific events for Wilderness (Forest, Cave, etc.)
 const WILD_EVENTS = [
     { text: "You find an abandoned campfire.", reward: { type: 'item', val: 'potion' }, msg: "Someone left a Health Potion!" },
     { text: "You step into a hunter's trap!", reward: { type: 'damage', val: 15 }, msg: "Ouch! You take 15 damage." },
@@ -247,6 +263,350 @@ const WILD_EVENTS = [
 
 // --- Components ---
 
+// Utility component to render Modals/Complex UIs over the main content
+const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, totalMaxMana, totalCrit, totalDmg, totalDef, location, addLog, getItemImage, calculateItemValue, handleBuyItem, handleCraft, CRAFTING_RECIPES, SHOP_ITEMS, handleEquipItem, sellItem, sellAllLoot, handleRest, handleGamble, generateRandomQuests, availableQuests, acceptQuest, checkQuestCompletion, setForgeMode, forgeMode, handleEnchant, weaponEnchant, armorEnchant, getEnchantGlow, siegeDiscount }) => {
+
+    // --- RENDER FUNCTIONS FOR MODAL CONTENT ---
+
+    const renderInventory = () => (
+        <div className="flex flex-col h-full">
+            <div className="flex justify-between items-center mb-4 border-b border-amber-900 pb-2">
+                <h3 className="text-xl font-bold text-amber-300 flex items-center gap-2"><Backpack className="w-6 h-6" /> Inventory ({player.inventory.reduce((acc, i) => acc + i.count, 0)} Items)</h3>
+                {location.id === 'town' && player.inventory.length > 0 && (
+                    <button onClick={sellAllLoot} className="text-xs bg-red-800 px-3 py-1 rounded hover:bg-red-700 border border-red-900 font-bold">
+                        Sell All Loot ({player.inventory.reduce((a, b) => a + (calculateItemValue(b) * b.count), 0)}G)
+                    </button>
+                )}
+            </div>
+            {/* Dynamic Inventory List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 overflow-y-auto flex-1 custom-scrollbar">
+                {player.inventory.map((item, idx) => {
+                    const visual = getItemImage(item.name, item.rarity);
+                    const isEquippable = item.type === 'weapon' || item.type === 'armor';
+                    const itemValue = calculateItemValue(item);
+
+                    let glowClass = 'border-stone-600';
+                    if (item.enchant) {
+                        glowClass = getEnchantGlow(item.enchant);
+                    } else if (item.rarity === 'epic') {
+                        glowClass = 'border-purple-500 shadow-sm shadow-purple-900';
+                    }
+                    
+                    const shopRef = SHOP_ITEMS.find(i => i.name === item.name);
+                    const classRestricted = shopRef && shopRef.classReq && shopRef.classReq !== 'all' && shopRef.classReq !== player.class;
+
+                    return (
+                        <div key={idx} className={`bg-stone-800/80 p-3 rounded text-sm flex gap-3 relative group border-2 transition-all ${glowClass}`}>
+                            
+                            <div className="shrink-0">
+                                <img src={visual} alt={item.name} className="w-12 h-12 rounded border-2 border-stone-600 shadow-inner" />
+                            </div>
+                            <div className="flex flex-col w-full overflow-hidden justify-between">
+                                <div className="flex justify-between items-start">
+                                    <span className={`font-bold truncate ${item.rarity === 'epic' ? 'text-purple-300' : 'text-amber-300'}`}>{item.name}</span>
+                                    {item.level && <span className="text-xs bg-stone-700 px-2 rounded-full text-stone-400">Lvl {item.level}</span>}
+                                </div>
+                                {/* Dynamic Item Stats */}
+                                <div className="flex flex-col gap-1 text-xs text-stone-400">
+                                    <div className='flex gap-2'>
+                                        {item.damage > 0 && <span className="flex items-center gap-1 text-red-300"><Sword className="w-3 h-3" /> +{item.damage} Dmg</span>}
+                                        {item.defense > 0 && <span className="flex items-center gap-1 text-green-300"><Shield className="w-3 h-3" /> +{item.defense} Def</span>}
+                                    </div>
+                                    {item.enchant && <div className="text-xs text-purple-300 mt-1 flex items-center gap-1"><Sparkles className='w-3 h-3' />{item.enchant.name}: {item.enchant.desc}</div>}
+                                </div>
+                                <div className="text-xs text-stone-500">{item.count > 1 ? `Count: x${item.count}` : ''}</div>
+                                {classRestricted && <div className='text-xs text-red-400 font-bold mt-1'>Class Restricted!</div>}
+                            </div>
+                            <div className="flex flex-col gap-2 shrink-0 min-w-[60px] items-end">
+                                <div className="text-right text-amber-400 font-bold text-sm">{itemValue} G</div>
+
+                                {isEquippable && (
+                                    <button 
+                                        onClick={() => handleEquipItem(idx)} 
+                                        disabled={classRestricted}
+                                        className={`w-full text-white text-xs py-1 rounded shadow transition-colors font-bold ${classRestricted ? 'bg-red-900/50' : 'bg-blue-600 hover:bg-blue-500'}`}
+                                    >
+                                        Equip
+                                    </button>
+                                )}
+                                {location.id === 'town' && (
+                                    <button onClick={() => sellItem(idx)} className="w-full bg-red-900/50 hover:bg-red-700 text-red-200 text-xs py-1 rounded text-center font-bold">
+                                        Sell
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+                {player.inventory.length === 0 && <div className="col-span-2 text-center text-stone-500 italic py-6">Your bag is empty. Go find some loot!</div>}
+            </div>
+            <button onClick={() => setGameState('IDLE')} className="mt-4 bg-stone-600 hover:bg-stone-500 w-full py-3 rounded text-sm font-bold border border-stone-500">Close Inventory</button>
+        </div>
+    );
+
+    const renderShop = () => (
+        <div className="flex flex-col h-full">
+            <h3 className="text-xl font-bold text-amber-300 mb-4 border-b border-amber-900 pb-2 flex items-center gap-2"><ShoppingBag className="w-6 h-6" /> The Market</h3>
+            {siegeDiscount && (
+                <div className="text-center text-green-400 font-bold text-sm mb-4 p-2 bg-green-900/30 rounded border border-green-700/50">
+                    Hero Discount Active: All prices halved!
+                </div>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto flex-1 custom-scrollbar pb-4">
+                {SHOP_ITEMS.map(item => {
+                    if (item.classReq && item.classReq !== 'all' && item.classReq !== player.class) return null;
+                    const visual = getItemImage(item.name);
+                    const finalCost = siegeDiscount ? Math.floor(item.cost / 2) : item.cost;
+                    return (
+
+                        <button
+                            key={item.id}
+                            onClick={() => handleBuyItem(item)}
+                            className="bg-stone-800 p-3 rounded-lg border-2 border-amber-900 shadow-md transition-all hover:shadow-amber-500/20 flex flex-col items-center justify-between min-h-[160px] active:scale-[0.98]"
+                        >
+                            <img src={visual} alt={item.name} className="w-12 h-12 rounded border border-stone-600 shadow-inner mb-2" />
+                            <div className="flex flex-col items-center text-center flex-1">
+                                <span className="font-bold text-sm text-amber-400 tracking-wide">{item.name}</span>
+                                <span className="text-xs text-stone-400 mb-1">{item.desc}</span>
+                            </div>
+                            
+                            <span className="text-sm font-bold">
+                                {siegeDiscount ? (
+                                    <span className="text-green-400">{finalCost} G <span className="line-through text-stone-500 ml-1 text-xs">{item.cost} G</span></span>
+                                ) : (
+                                    <span className='text-amber-500'>{item.cost} G</span>
+                                )}
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+            <button onClick={() => setGameState('IDLE')} className="mt-4 bg-stone-600 hover:bg-stone-500 w-full py-3 rounded text-sm font-bold border border-stone-500">Leave Shop</button>
+        </div>
+    );
+
+    const renderBlacksmith = () => (
+        <div className="flex flex-col items-center h-full w-full p-2 overflow-y-auto">
+
+            <h2 className="text-xl font-bold text-stone-300 mb-6 flex gap-2 items-center border-b border-amber-900 pb-2">
+                <img src={ITEM_IMAGES.forge} alt="Forge" className='w-8 h-8' /> The Forge & Enchanter
+            </h2>
+
+            {/* --- TAB TOGGLES --- */}
+            <div className="flex gap-2 mb-6 bg-stone-800 p-1 rounded-lg border border-stone-700">
+                <button
+                    onClick={() => setForgeMode('UPGRADE')}
+                    className={`px-4 py-2 text-sm rounded transition-all ${forgeMode === 'UPGRADE'
+                        ? 'bg-stone-600 text-white font-bold shadow-md'
+                        : 'text-stone-400 hover:text-stone-200'
+                        }`}
+                >
+                    Refine (Level Up)
+                </button>
+                <button
+                    onClick={() => setForgeMode('ENCHANT')}
+                    className={`px-4 py-2 text-sm rounded transition-all flex gap-1 items-center ${forgeMode === 'ENCHANT'
+                        ? 'bg-purple-900/50 text-purple-200 font-bold shadow-md border border-purple-500/30'
+                        : 'text-stone-400 hover:text-purple-300'
+                        }`}
+                >
+                    <Sparkles className="w-4 h-4" /> Enchant (Reroll Effect)
+                </button>
+            </div>
+
+            {/* --- UPGRADE SECTION --- */}
+            {forgeMode === 'UPGRADE' && (
+                <div className="flex flex-col md:flex-row gap-6 justify-center items-center mb-6 w-full max-w-xl animate-in fade-in duration-300">
+                    {/* Weapon Upgrade Button */}
+                    <button onClick={() => {
+                        const cost = player.equipment.weapon.level * 100; // Dynamic Cost
+                        if (player.gold >= cost) {
+                            setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, weapon: { ...p.equipment.weapon, level: p.equipment.weapon.level + 1, damage: p.equipment.weapon.damage + 3 } } }));
+                            addLog(`Upgraded Weapon to +${player.equipment.weapon.level + 1}!`, 'success');
+                        } else addLog(`Need ${cost} Gold`, 'error');
+                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
+                        <img src={getItemImage(player.equipment.weapon.name, player.equipment.weapon.rarity)} alt="Weapon" className="w-16 h-16 rounded-sm mb-2 border border-stone-600" />
+                        <div className="text-lg font-bold text-amber-400 mb-1">Refine Weapon</div>
+                        <div className="text-xs text-stone-400 mb-2">Lvl {player.equipment.weapon.level} - Lvl {player.equipment.weapon.level + 1} (+3 Dmg)</div>
+                        <div className="text-amber-500 font-bold text-sm mt-1">{player.equipment.weapon.level * 100} G</div>
+                    </button>
+
+                    {/* Armor Upgrade Button */}
+                    <button onClick={() => {
+                        const cost = player.equipment.armor.level * 100; // Dynamic Cost
+                        if (player.gold >= cost) {
+                            setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, armor: { ...p.equipment.armor, level: p.equipment.armor.level + 1, defense: p.equipment.armor.defense + 2 } } }));
+                            addLog(`Upgraded Armor to +${player.equipment.armor.level + 1}!`, 'success');
+                        } else addLog(`Need ${cost} Gold`, 'error');
+                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
+                        <img src={getItemImage(player.equipment.armor.name, player.equipment.armor.rarity)} alt="Armor" className="w-16 h-16 rounded-sm mb-2 border border-stone-600" />
+                        <div className="text-lg font-bold text-amber-400 mb-1">Refine Armor</div>
+                        <div className="text-xs text-stone-400 mb-2">Lvl {player.equipment.armor.level} - Lvl {player.equipment.armor.level + 1} (+2 Def)</div>
+                        <div className="text-amber-500 font-bold text-sm mt-1">{player.equipment.armor.level * 100} G</div>
+                    </button>
+                </div>
+            )}
+
+            {/* --- ENCHANT SECTION --- */}
+            {forgeMode === 'ENCHANT' && (
+                <div className="bg-stone-800 p-6 rounded-xl border-4 border-purple-500/50 w-full max-w-xl mb-4 animate-in slide-in-from-right-4 duration-300 shadow-2xl shadow-purple-900/30 animate-purple-pulse">
+                    <div className="text-center text-purple-300 font-bold text-lg mb-4 flex items-center justify-center gap-2 border-b border-purple-900 pb-2">
+                        <Sparkles className="w-5 h-5" /> Mystical Enchantment (200 G Per Attempt)
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <button onClick={() => handleEnchant('weapon')} className="bg-stone-700 hover:bg-stone-600 p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
+                            <div className="text-xs text-stone-400">Weapon Effect</div>
+                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                                {weaponEnchant ? weaponEnchant.name : 'None'}
+                            </div>
+                            <div className="text-xs text-stone-500 h-4 overflow-hidden">{weaponEnchant?.desc || 'No active magic'}</div>
+                            <div className="mt-3 text-amber-500 font-bold text-sm group-hover:scale-105 transition-transform">Enchant Weapon</div>
+                        </button>
+
+                        <button onClick={() => handleEnchant('armor')} className="bg-stone-700 hover:bg-stone-600 p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
+                            <div className="text-xs text-stone-400">Armor Effect</div>
+                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                                {armorEnchant ? armorEnchant.name : 'None'}
+                            </div>
+                            <div className="text-xs text-stone-500 h-4 overflow-hidden">{armorEnchant?.desc || 'No active magic'}</div>
+                            <div className="mt-3 text-amber-500 font-bold text-sm group-hover:scale-105 transition-transform">Enchant Armor</div>
+                        </button>
+                    </div>
+                    <div className="mt-4 text-center text-xs text-purple-400/60 italic">
+                        Warning: Enchanting replaces existing effects. Random result.
+                    </div>
+                </div>
+            )}
+
+            <button onClick={() => setGameState('IDLE')} className="bg-stone-600 hover:bg-stone-500 px-8 py-3 rounded text-sm mt-auto font-bold border border-stone-500 active:scale-[0.98]">Leave Blacksmith</button>
+        </div>
+    );
+
+    const renderAlchemist = () => (
+        <div className="flex flex-col h-full w-full">
+            <h3 className="text-xl font-bold text-green-300 mb-4 border-b border-amber-900 pb-2 flex items-center gap-2"><FlaskConical className="w-6 h-6" /> Bubbling Brews</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto flex-1 mb-4 custom-scrollbar">
+                {CRAFTING_RECIPES.map((recipe, idx) => {
+                    const hasIngredients = recipe.ingredients.every(ing => {
+                        const item = player.inventory.find(i => i.name === ing.name);
+                        return item && item.count >= ing.count;
+                    });
+                    const canAfford = player.gold >= recipe.cost;
+                    const isDisabled = !hasIngredients || !canAfford;
+
+                    return (
+                        <button 
+                            key={idx} 
+                            onClick={() => handleCraft(recipe)} 
+                            disabled={isDisabled}
+                            className={`p-3 rounded flex flex-col items-start border-2 transition-all active:scale-[0.98] ${isDisabled 
+                                ? 'bg-stone-900/50 border-stone-700 opacity-60 cursor-not-allowed'
+                                : 'bg-green-900/30 border-green-700 hover:bg-green-900/50'
+                            }`}
+                        >
+                            <div className="font-bold text-green-300 text-base">{recipe.name} ({recipe.type === 'stat' ? 'Permanent' : 'Consumable'})</div>
+                            <div className="text-xs text-stone-400 mb-2">{recipe.desc || 'No description.'}</div>
+                            <div className="text-xs text-stone-300 mt-auto">
+                                <div className='font-bold text-sm text-amber-500'>{recipe.cost} G</div>
+                                <div className='mt-1'>
+                                    {recipe.ingredients.map((ing, i) => (
+                                        <div key={i} className={`flex items-center gap-1 ${player.inventory.find(item => item.name === ing.name && item.count >= ing.count) ? 'text-green-400' : 'text-red-400'}`}>
+                                            <CheckCircle className='w-3 h-3' /> {ing.count}x {ing.name}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </button>
+                    );
+                })}
+            </div>
+            <button onClick={() => setGameState('IDLE')} className="mt-4 bg-stone-600 hover:bg-stone-500 w-full py-3 rounded text-sm font-bold border border-stone-500 active:scale-[0.98]">Leave Alchemist</button>
+        </div>
+    );
+
+    const renderQuestBoard = () => (
+        <div className="w-full h-full flex flex-col">
+            <h3 className="text-xl font-bold text-yellow-500 mb-4 border-b border-amber-900 pb-2 flex items-center gap-2"><Scroll className="w-6 h-6" /> Town Notice Board</h3>
+
+            <div className="flex gap-4 mb-4 justify-center">
+                <button onClick={generateRandomQuests} className="text-sm bg-amber-600/50 px-4 py-2 rounded hover:bg-amber-600/70 border border-amber-500 font-bold active:scale-[0.98]">Refresh Notices (New Quests)</button>
+                <button onClick={() => checkQuestCompletion()} className="text-sm bg-blue-600 px-4 py-2 rounded hover:bg-blue-500 font-bold border border-blue-700 active:scale-[0.98]">Claim Rewards</button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto flex-1 mb-4 custom-scrollbar">
+                {availableQuests.length === 0 ? <div className="text-stone-500 text-center col-span-2 py-6">The board is empty. Try refreshing the notices.</div> :
+                    availableQuests.map(q => (
+                        <button key={q.id} onClick={() => acceptQuest(q)} className="bg-amber-900/30 border-2 border-amber-700 p-4 rounded text-left hover:bg-amber-900/50 transition-colors group shadow-lg shadow-black/20 active:scale-[0.98]">
+                            <div className="font-bold text-xl text-amber-300 group-hover:text-amber-100">{q.type === 'kill' ? 'WANTED: ' : 'REQUEST: '} {q.target}</div>
+                            <div className="text-sm text-stone-400 mb-2">{q.type === 'kill' ? `Hunt ${q.required} targets` : `Gather ${q.required} items`}</div>
+                            <div className="text-lg text-yellow-200 font-extrabold flex items-center gap-3">
+                                <Coins className='w-4 h-4' /> {q.rewardGold} G 
+                                <Gem className='w-4 h-4' /> {q.rewardXp} XP
+                            </div>
+                        </button>
+                    ))}
+            </div>
+            <button onClick={() => setGameState('IDLE')} className="mt-4 bg-stone-600 hover:bg-stone-500 w-full py-3 rounded text-sm font-bold border border-stone-500 active:scale-[0.98]">Close Board</button>
+        </div>
+    );
+
+    const renderTavern = () => (
+        <div className="flex flex-col h-full w-full justify-center">
+            <h3 className="text-xl font-bold text-amber-300 mb-6 border-b border-amber-900 pb-2 flex items-center justify-center gap-2"><Beer className="w-6 h-6" /> The Rusty Tankard</h3>
+            
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-center flex-1">
+                <button onClick={handleRest} className="bg-green-800/40 hover:bg-green-800/60 p-6 rounded-xl border-2 border-green-600 flex flex-col items-center min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
+                    <Heart className='w-8 h-8 mb-2 text-red-400' />
+                    <div className="text-xl font-bold mb-1">Rest</div>
+                    <div className="text-sm text-green-300 mb-3">Restore All HP/Mana</div>
+                    <div className="text-amber-400 font-bold text-lg">50 G</div>
+                </button>
+                <button onClick={handleGamble} className="bg-amber-800/40 hover:bg-amber-800/60 p-6 rounded-xl border-2 border-amber-600 flex flex-col items-center min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
+                    <Dices className='w-8 h-8 mb-2 text-stone-300' />
+                    <div className="text-xl font-bold mb-1">Gamble</div>
+                    <div className="text-sm text-amber-300 mb-3">Roll Dice (Win 7+)</div>
+                    <div className="text-amber-400 font-bold text-lg">10 G</div>
+                </button>
+            </div>
+            <button onClick={() => setGameState('IDLE')} className="mt-6 bg-stone-600 hover:bg-stone-500 w-full py-3 rounded text-sm font-bold border border-stone-500 active:scale-[0.98]">Leave Tavern</button>
+        </div>
+    );
+
+    // Determines which modal to render
+    const renderContent = () => {
+        switch (gameState) {
+            case 'INVENTORY':
+                return renderInventory();
+            case 'SHOP':
+                return renderShop();
+            case 'BLACKSMITH':
+                return renderBlacksmith();
+            case 'ALCHEMIST':
+                return renderAlchemist();
+            case 'QUEST_BOARD':
+                return renderQuestBoard();
+            case 'TAVERN':
+                return renderTavern();
+            default:
+                return null;
+        }
+    };
+
+    // Only display the modal if one of the complex states is active
+    if (!['INVENTORY', 'SHOP', 'BLACKSMITH', 'ALCHEMIST', 'QUEST_BOARD', 'TAVERN'].includes(gameState)) {
+        return null;
+    }
+
+    return (
+        <div className="fixed inset-0 bg-black/80 z-40 flex items-center justify-center p-4 animate-in fade-in duration-300">
+            <div className="bg-stone-900 border-4 border-amber-700 shadow-2xl shadow-black/80 rounded-xl w-full max-w-4xl h-[85vh] p-6 text-stone-300 relative animate-in zoom-in duration-300">
+                {renderContent()}
+            </div>
+        </div>
+    );
+};
+
 export default function App({ initialPlayer }) {
 
     // --- State Management ---
@@ -254,6 +614,11 @@ export default function App({ initialPlayer }) {
     const [gameState, setGameState] = useState('CLASS_SELECT');
     const [location, setLocation] = useState(LOCATIONS[0]);
     const [forgeMode, setForgeMode] = useState('UPGRADE'); // Options: 'UPGRADE' or 'ENCHANT'
+    const [isSiegeActive, setIsSiegeActive] = useState(false);
+    const [siegeDiscount, setSiegeDiscount] = useState(false); 
+    
+    // NEW STATE: Manages which panel is visible on mobile ('stats', 'log', 'map')
+    const [mobileView, setMobileView] = useState('log'); 
 
     // Visual Effects State
     const [floatingTexts, setFloatingTexts] = useState([]); // { id, text, color, x, y }
@@ -284,6 +649,8 @@ export default function App({ initialPlayer }) {
             armor: { name: 'Cloth Shirt', type: 'armor', defense: 1, level: 1, rarity: 'common' }
         }
     });
+
+    // EFFECT: Load initial player data if provided (e.g., from cloud/session)
     useEffect(() => {
         if (initialPlayer) setPlayer(initialPlayer);   // load saved game
     }, [initialPlayer]);
@@ -303,29 +670,21 @@ export default function App({ initialPlayer }) {
         window.location.reload();  // refresh app to show login screen again
     };
 
-    // --- CLOUD SAVE ---
+    // --- CLOUD SAVE (DYNAMIC) ---
     const saveToSupabase = async () => {
-        const { data } = await supabase.auth.getUser();
-        const email = data.user.email;    // USER EMAIL
+        try {
+            const { data } = await supabase.auth.getUser();
+            const email = data.user.email;    // USER EMAIL
 
-        await saveToCloud(email, player);
-        addLog("☁️ Saved to cloud!", "success");
+            await saveToCloud(email, player);
+            addLog("☁️ Saved to cloud!", "success");
+        } catch (error) {
+             addLog("⚠️ Failed to save to cloud. Log in required.", "error");
+        }
     };
 
 
-    // --- CLOUD LOAD ---
-    // const loadFromSupabase = async () => {
-    //   const data = await loadFromCloud(userId);
-    //   if (data) {
-    //     setPlayer(prev => ({ ...prev, ...data }));
-    //     addLog("☁️ Loaded from cloud!", "success");
-    //   } else {
-    //     addLog("⚠ No cloud save found.", "warning");
-    //   }
-    // };
-
-
-    // --- Derived Stats (Includes Enchants) ---
+    // --- Derived Stats (DYNAMIC: Recalculates on every player state change) ---
     const weaponEnchant = player.equipment.weapon.enchant;
     const armorEnchant = player.equipment.armor.enchant;
 
@@ -343,8 +702,7 @@ export default function App({ initialPlayer }) {
 
     const logEndRef = useRef(null);
 
-    // --- Local Storage Save/Load ---
-
+    // --- Local Storage Save/Load (DYNAMIC persistence) ---
     useEffect(() => {
         const savedData = localStorage.getItem('realms_rpg_save');
         if (savedData) {
@@ -375,7 +733,7 @@ export default function App({ initialPlayer }) {
         }
     }, [player]);
 
-    // --- Visual FX Helpers ---
+    // --- Visual FX Helpers (DYNAMIC) ---
 
     const addLog = (text, type = 'info') => {
         setLogs(prev => [...prev, { text, type, id: Date.now() + Math.random() }]);
@@ -391,7 +749,7 @@ export default function App({ initialPlayer }) {
         if (type === 'damage') color = 'text-red-400';
         if (type === 'crit') color = 'text-yellow-400 font-bold text-xl';
         if (type === 'heal') color = 'text-green-400';
-        if (type === 'gold') color = 'text-yellow-300';
+        if (type === 'gold') color = 'text-amber-300';
 
         setFloatingTexts(prev => [...prev, { id, text, color, x, y }]);
         setTimeout(() => {
@@ -404,8 +762,9 @@ export default function App({ initialPlayer }) {
         setTimeout(() => setShake(false), 300);
     };
 
-    // --- Game Logic Helpers ---
+    // --- Game Logic Helpers (DYNAMIC) ---
 
+    // EFFECT: Checks for level up on XP change
     useEffect(() => { if (player.xp >= player.xpToNext) levelUp(); }, [player.xp]);
 
     const levelUp = () => {
@@ -414,7 +773,7 @@ export default function App({ initialPlayer }) {
             ...prev,
             level: prev.level + 1,
             xp: prev.xp - prev.xpToNext,
-            xpToNext: Math.floor(prev.xpToNext * 1.5),
+            xpToNext: Math.floor(prev.xpToNext * 1.5), 
             maxHp: prev.maxHp + 20,
             hp: prev.maxHp + 20,
             maxMana: prev.maxMana + (cls ? cls.manaBonus / 2 : 5),
@@ -426,19 +785,16 @@ export default function App({ initialPlayer }) {
         spawnFloatingText("LEVEL UP!", "crit");
     };
 
-    // Helper to calculate value of dynamic equipment
     const calculateItemValue = (item) => {
-        if (item.value) return item.value; // Fixed value items (loot)
-        // Calculate value based on stats for equipment
+        if (item.value) return item.value; 
         const baseVal = item.rarity === 'epic' ? 500 : 50;
         const levelMult = (item.level || 1) * 20;
         const statMult = ((item.damage || 0) + (item.defense || 0)) * 10;
         return Math.floor(baseVal + levelMult + statMult);
     };
 
-    
-    const getItemImage = (name, rarity = 'common') => {
 
+    const getItemImage = (name, rarity = 'common') => {
         if (ITEM_IMAGES[name]) {
             return ITEM_IMAGES[name];
         }
@@ -484,22 +840,18 @@ export default function App({ initialPlayer }) {
         return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
     };
 
-    // Helper to get glow styles based on enchantment ID
     const getEnchantGlow = (enchant) => {
         if (!enchant) return '';
 
         switch (enchant.id) {
-            // --- WEAPONS ---
-            case 'sharp': return 'shadow-[0_0_10px_#94a3b8] border-slate-400'; // Silver/Grey
-            case 'flaming': return 'shadow-[0_0_15px_#f97316] border-orange-500'; // Bright Orange
-            case 'vampiric': return 'shadow-[0_0_15px_#dc2626] border-red-600'; // Deep Red
-            case 'lucky': return 'shadow-[0_0_15px_#fbbf24] border-yellow-400'; // Gold
-
-            // --- ARMOR ---
-            case 'sturdy': return 'shadow-[0_0_10px_#64748b] border-slate-500'; // Steel Blue
-            case 'blessed': return 'shadow-[0_0_15px_#10b981] border-emerald-500'; // Green
-            case 'arcane': return 'shadow-[0_0_15px_#06b6d4] border-cyan-500'; // Cyan/Magic
-            case 'spiked': return 'shadow-[0_0_15px_#d946ef] border-fuchsia-500'; // Purple/Pink
+            case 'sharp': return 'shadow-[0_0_10px_#94a3b8] border-slate-400';
+            case 'flaming': return 'shadow-[0_0_15px_#f97316] border-orange-500';
+            case 'vampiric': return 'shadow-[0_0_15px_#dc2626] border-red-600';
+            case 'lucky': return 'shadow-[0_0_15px_#fbbf24] border-yellow-400';
+            case 'sturdy': return 'shadow-[0_0_10px_#64748b] border-slate-500';
+            case 'blessed': return 'shadow-[0_0_15px_#10b981] border-emerald-500';
+            case 'arcane': return 'shadow-[0_0_15px_#06b6d4] border-cyan-500';
+            case 'spiked': return 'shadow-[0_0_15px_#d946ef] border-fuchsia-500';
 
             default: return '';
         }
@@ -519,7 +871,7 @@ export default function App({ initialPlayer }) {
             gold: prev.gold - 200,
             equipment: {
                 ...prev.equipment,
-                [slot]: { ...prev.equipment[slot], enchant: newEnchant }
+                [slot]: { ...prev.equipment[slot], enchant: newEnchant } 
             }
         }));
 
@@ -527,7 +879,7 @@ export default function App({ initialPlayer }) {
         addLog(`Enchanted ${slot}! It is now ${newEnchant.name} (${newEnchant.desc}).`, 'success');
     };
 
-    // --- Event System ---
+    // --- Event System (DYNAMIC) ---
 
     const triggerEvent = () => {
         const eventTemplate = EXPLORATION_EVENTS[Math.floor(Math.random() * EXPLORATION_EVENTS.length)];
@@ -568,7 +920,7 @@ export default function App({ initialPlayer }) {
         setActiveEvent(null);
     };
 
-    // --- Quest System Helper ---
+    // --- Quest System Helper (DYNAMIC) ---
     const checkQuestCompletion = (killTarget = null) => {
         setPlayer(prev => {
             let newQuests = prev.activeQuests.map(q => {
@@ -628,12 +980,12 @@ export default function App({ initialPlayer }) {
         });
     };
 
-    // --- Combat System ---
+    // --- Combat System (DYNAMIC) ---
 
     const generateEnemy = (mode = 'normal') => {
         const difficultyMod = location.difficulty;
 
-        // Boss Fight Mode
+        // Boss Fight Mode (Dynamic Boss Stats)
         if (mode === 'boss') {
             setEnemy({
                 name: location.boss,
@@ -649,7 +1001,7 @@ export default function App({ initialPlayer }) {
             return;
         }
 
-        // Arena Mode
+        // Arena Mode (Dynamic Arena Scaling)
         if (mode === 'arena') {
             const typeIndex = Math.floor(Math.random() * ENEMY_TYPES.length);
             const template = ENEMY_TYPES[typeIndex];
@@ -662,7 +1014,7 @@ export default function App({ initialPlayer }) {
                 maxHp: template.baseHp + (arenaLevel * 15),
                 hp: template.baseHp + (arenaLevel * 15),
                 damage: template.baseDmg + (arenaLevel * 3),
-                exp: (template.exp + (arenaLevel * 5)) * 2, // Double XP in arena
+                exp: (template.exp + (arenaLevel * 5)) * 2,
                 isArena: true
             });
             setGameState('COMBAT');
@@ -671,7 +1023,7 @@ export default function App({ initialPlayer }) {
             return;
         }
 
-        // Normal Mode (Exploration)
+        // Normal Mode (Dynamic Scaling, Prefixing, and Elite Chance)
         const hasPrefix = Math.random() > 0.5;
         const prefix = hasPrefix ? ENEMY_PREFIXES[Math.floor(Math.random() * ENEMY_PREFIXES.length)] : null;
         const isElite = player.level % 5 === 0 && Math.random() > 0.8;
@@ -710,13 +1062,11 @@ export default function App({ initialPlayer }) {
         setPlayer(p => ({ ...p, mana: p.mana - skill.cost, cooldowns: { ...p.cooldowns, [skill.id]: skill.cd } }));
         if (skill.effect === 'block') setCombatState(p => ({ ...p, defending: true }));
 
-        // --- DAMAGE CALCULATION (Enchants included in totalDmg/totalCrit) ---
         const isGuaranteedCrit = skill.effect === 'crit';
         const isCrit = isGuaranteedCrit || (Math.random() < totalCrit);
         const critMult = isCrit ? 1.5 : 1;
-        const finalDmg = Math.floor(totalDmg * skill.dmgMult * critMult * (0.9 + Math.random() * 0.2));
+        const finalDmg = Math.floor(totalDmg * skill.dmgMult * critMult * (0.9 + Math.random() * 0.2)); 
 
-        // --- LIFESTEAL LOGIC ---
         if (weaponEnchant?.bonus === 'lifesteal') {
             const healAmt = Math.ceil(finalDmg * weaponEnchant.val);
             setPlayer(p => ({ ...p, hp: Math.min(totalMaxHp, p.hp + healAmt) }));
@@ -747,7 +1097,6 @@ export default function App({ initialPlayer }) {
                 setCombatState(p => ({ ...p, defending: false }));
             }
 
-            // --- THORNS LOGIC ---
             let thornDmg = 0;
             if (armorEnchant?.bonus === 'thorns') {
                 thornDmg = armorEnchant.val;
@@ -767,9 +1116,9 @@ export default function App({ initialPlayer }) {
             addLog(`${prevEnemy.name} attacks for ${incomingDmg} dmg!`, 'danger');
 
             if (thornDmg > 0) {
-                spawnFloatingText(`${thornDmg}`, 'crit'); // Thorns visual
+                setEnemy(pE => ({ ...pE, hp: pE.hp - thornDmg })); 
+                spawnFloatingText(`${thornDmg}`, 'crit');
                 addLog(`Spiked armor reflected ${thornDmg} damage!`, 'info');
-                return { ...prevEnemy, hp: prevEnemy.hp - thornDmg };
             }
 
             return prevEnemy;
@@ -791,29 +1140,31 @@ export default function App({ initialPlayer }) {
             dropMsg = ` Found ${dropItem.name}!`;
         }
 
+        if (enemy.isSiege) {
+            setIsSiegeActive(false);
+            setSiegeDiscount(true);
+            addLog("🎉 You saved the town! Merchants offer 50% off everything!", "success");
+            spawnFloatingText("TOWN SAVED!", "crit");
+        }
+
         if (enemy.isBoss) {
             const isWeapon = Math.random() > 0.5;
             const slot = isWeapon ? 'weapon' : 'armor';
-            
-            // Create the item object
+
             const newEpic = {
                 name: isWeapon ? `Epic ${location.boss.split(' ')[0]} Blade` : `Epic ${location.boss.split(' ')[0]} Plate`,
                 level: player.level,
                 rarity: 'epic',
                 type: slot,
                 [slot === 'weapon' ? 'damage' : 'defense']: (slot === 'weapon' ? 10 : 5) + (player.level * 2),
-                value: 500,  // Add value so it can be sold
-                count: 1     // Add count so it works in inventory
+                value: 500,
+                count: 1
             };
 
-            // CHANGE: Message says "Found" instead of "Equipped"
             dropMsg += ` 🟣 BOSS DROP: Found ${newEpic.name}!`;
-
-            // CHANGE: Push to inventory array instead of setting player equipment immediately
-            newInventory.push(newEpic); 
+            newInventory.push(newEpic);
         }
 
-        // Update Zone Progress (Only for exploration)
         let newProgress = { ...player.zoneProgress };
         if (!location.id.includes('town') && !enemy.isArena) {
             const currentProg = newProgress[location.id] || 0;
@@ -821,7 +1172,7 @@ export default function App({ initialPlayer }) {
                 newProgress[location.id] = 0;
                 addLog(`The ${location.name} is safe... for now.`, 'success');
             } else {
-                newProgress[location.id] = Math.min(100, currentProg + 20);
+                newProgress[location.id] = Math.min(100, currentProg + 20); 
             }
         }
 
@@ -837,21 +1188,19 @@ export default function App({ initialPlayer }) {
         spawnFloatingText(`+${goldReward} G`, 'gold');
         addLog(`Victory! +${goldReward} G, +${xpReward} XP.${dropMsg}`, 'success');
 
-        // ARENA LOGIC
         if (enemy.isArena) {
             setArenaWave(prev => prev + 1);
             setGameState('ARENA_LOBBY');
             addLog("Wave Cleared! Prepare for the next.", 'success');
         }
-        // NORMAL LOGIC
         else if (!enemy.isBoss) {
             let baseName = enemy.name;
             ENEMY_PREFIXES.forEach(p => baseName = baseName.replace(p.name + ' ', ''));
             baseName = baseName.replace('Elite ', '');
-            checkQuestCompletion(baseName);
+            checkQuestCompletion(baseName); 
             setGameState('IDLE');
         } else {
-            setGameState('IDLE'); // Boss End
+            setGameState('IDLE');
         }
 
         setEnemy(null);
@@ -873,10 +1222,9 @@ export default function App({ initialPlayer }) {
         addLog("Woke up in town. Lost half gold. Zone progress reset.", 'system');
     };
 
-    // --- Other Systems (Shop, Tavern, Crafting) ---
+    // --- Other Systems (Shop, Tavern, Crafting) (DYNAMIC) ---
 
     const handleCraft = (recipe) => {
-        // Check ingredients
         const hasIngredients = recipe.ingredients.every(ing => {
             const item = player.inventory.find(i => i.name === ing.name);
             return item && item.count >= ing.count;
@@ -889,7 +1237,6 @@ export default function App({ initialPlayer }) {
 
         setPlayer(prev => {
             let newInv = [...prev.inventory];
-            // Remove ingredients
             recipe.ingredients.forEach(ing => {
                 const idx = newInv.findIndex(i => i.name === ing.name);
                 if (newInv[idx].count > ing.count) newInv[idx].count -= ing.count;
@@ -898,10 +1245,9 @@ export default function App({ initialPlayer }) {
 
             let newState = { ...prev, gold: prev.gold - recipe.cost, inventory: newInv };
 
-            // Add Result
             if (recipe.result === 'potion') newState.potions++;
             else if (recipe.result === 'mana_potion') newState.manaPotions++;
-            else if (recipe.result === 'dmg') newState.damage += recipe.bonus;
+            else if (recipe.result === 'dmg') newState.damage += recipe.bonus; 
             else if (recipe.result === 'def') newState.defense += recipe.bonus;
 
             return newState;
@@ -910,13 +1256,17 @@ export default function App({ initialPlayer }) {
     };
 
     const handleBuyItem = (item) => {
-        if (player.gold < item.cost) {
+
+        let finalCost = item.cost;
+        if (siegeDiscount) finalCost = Math.floor(item.cost / 2); 
+
+        if (player.gold < finalCost) {
             addLog("Not enough Gold!", 'error');
             return;
         }
 
         setPlayer(prev => {
-            let newState = { ...prev, gold: prev.gold - item.cost };
+            let newState = { ...prev, gold: prev.gold - finalCost };
 
             if (item.type === 'consumable') {
                 if (item.id === 'potion') newState.potions++;
@@ -927,7 +1277,6 @@ export default function App({ initialPlayer }) {
                 const slot = item.type;
                 const currentEquip = prev.equipment[slot];
 
-                // If buying the EXACT same base item (and not epic), merge/upgrade it
                 if (currentEquip.name === item.name && currentEquip.rarity !== 'epic') {
                     const statBoost = slot === 'weapon' ? 3 : 2;
                     newState.equipment[slot] = {
@@ -937,19 +1286,15 @@ export default function App({ initialPlayer }) {
                     };
                     addLog(`Merged ${item.name}! It is now Level ${newState.equipment[slot].level}.`, 'success');
                 } else {
-                    // --- SMART SWAP LOGIC ---
-                    // 1. Create object for the item currently equipped
                     const oldItem = {
                         ...currentEquip,
-                        type: slot, // Ensure type is 'weapon' or 'armor'
+                        type: slot,
                         count: 1,
-                        value: calculateItemValue(currentEquip) // Calculate current value
+                        value: calculateItemValue(currentEquip)
                     };
 
-                    // 2. Push old item to inventory
                     newState.inventory.push(oldItem);
 
-                    // 3. Equip new item
                     newState.equipment[slot] = {
                         name: item.name,
                         type: slot,
@@ -967,36 +1312,42 @@ export default function App({ initialPlayer }) {
     const handleEquipItem = (index) => {
         const itemToEquip = player.inventory[index];
 
-        // Class Requirement Check
         const shopRef = SHOP_ITEMS.find(i => i.name === itemToEquip.name);
         if (shopRef && shopRef.classReq && shopRef.classReq !== 'all' && shopRef.classReq !== player.class) {
             addLog(`Only ${CLASSES[shopRef.classReq].name}s can use this!`, 'warning');
             return;
         }
 
-        const slot = itemToEquip.type; // 'weapon' or 'armor'
+        const slot = itemToEquip.type;
 
         setPlayer(prev => {
             const currentEquip = prev.equipment[slot];
             let newInv = [...prev.inventory];
 
-            // 1. Remove item from inventory
             if (newInv[index].count > 1) {
                 newInv[index].count--;
             } else {
                 newInv.splice(index, 1);
             }
 
-            // 2. Move currently equipped item to inventory
             const oldItem = {
                 ...currentEquip,
                 type: slot,
                 count: 1,
-                value: calculateItemValue(currentEquip)
+                value: calculateItemValue(currentEquip),
+                enchant: currentEquip.enchant
             };
-            newInv.push(oldItem);
+            
+            if(oldItem.level > 1 || oldItem.enchant) {
+                newInv.push(oldItem);
+            } else {
+                const starterGear = SHOP_ITEMS.find(i => i.id === (slot === 'weapon' ? 'rusty_dagger' : 'cloth_shirt'));
+                if(starterGear && currentEquip.name !== starterGear.name) {
+                    newInv.push(oldItem);
+                }
+            }
 
-            // 3. Set new equipment
+
             const newEquipment = {
                 ...prev.equipment,
                 [slot]: itemToEquip
@@ -1049,11 +1400,11 @@ export default function App({ initialPlayer }) {
             addLog("You need at least 10g to play dice.", 'warning');
             return;
         }
-        const roll = Math.floor(Math.random() * 12) + 1;
+        const roll = Math.floor(Math.random() * 12) + 1; 
         setPlayer(p => ({ ...p, gold: p.gold - 10 }));
 
         setTimeout(() => {
-            if (roll >= 8) {
+            if (roll >= 8) { 
                 const win = 20;
                 setPlayer(p => ({ ...p, gold: p.gold + win }));
                 addLog(`Rolled a ${roll}. You won ${win} gold!`, 'success');
@@ -1071,7 +1422,7 @@ export default function App({ initialPlayer }) {
             const enemyType = ENEMY_TYPES[Math.floor(Math.random() * (Math.min(ENEMY_TYPES.length, player.level + 2)))];
 
             if (isKill) {
-                const count = Math.floor(Math.random() * 3) + 2;
+                const count = Math.floor(Math.random() * 3) + 2; 
                 quests.push({
                     id: Date.now() + i,
                     type: 'kill',
@@ -1110,9 +1461,9 @@ export default function App({ initialPlayer }) {
     // --- Render Helpers ---
     const getBarColor = (c, m, type) => {
         const pct = c / m;
-        if (type === 'hp') return pct > 0.6 ? 'bg-green-500' : pct > 0.3 ? 'bg-yellow-500' : 'bg-red-500';
-        if (type === 'mana') return 'bg-blue-500';
-        return 'bg-purple-500';
+        if (type === 'hp') return pct > 0.6 ? 'bg-red-600' : pct > 0.3 ? 'bg-yellow-600' : 'bg-red-800';
+        if (type === 'mana') return 'bg-blue-600';
+        return 'bg-amber-500'; // XP
     };
 
     const selectClass = (classId) => {
@@ -1132,15 +1483,13 @@ export default function App({ initialPlayer }) {
     };
 
     const explore = () => {
-        // 1. TOWN EXPLORATION (Safe, non-combat events)
+        // 1. TOWN EXPLORATION 
         if (location.id === 'town') {
             const roll = Math.random();
-            
+
             if (roll < 0.3) {
-                // 30% Chance for a specific town event
                 const event = TOWN_EVENTS[Math.floor(Math.random() * TOWN_EVENTS.length)];
-                
-                // Apply Rewards/Penalties
+
                 setPlayer(p => {
                     let ns = { ...p };
                     if (event.reward.type === 'gold') ns.gold += event.reward.val;
@@ -1152,9 +1501,8 @@ export default function App({ initialPlayer }) {
 
                 addLog(event.text + " " + event.msg, event.reward.type === 'lose_gold' || event.reward.type === 'damage' ? 'danger' : 'success');
                 if (event.reward.type === 'gold') spawnFloatingText(`+${event.reward.val} G`, 'gold');
-                
+
             } else {
-                // 70% Chance for generic flavor text
                 const townFlavors = [
                     "The blacksmith is hammering loudly today.",
                     "Guards patrol the streets, eyeing you suspiciously.",
@@ -1167,21 +1515,18 @@ export default function App({ initialPlayer }) {
             return;
         }
 
-        // 2. WILDERNESS EXPLORATION (Danger, Combat, Events)
+        // 2. WILDERNESS EXPLORATION 
         const roll = Math.random();
 
-        // 50% Chance: COMBAT
         if (roll < 0.5) {
             generateEnemy('normal');
-        } 
-        // 30% Chance: INTERACTIVE EVENT (The popup choices you already have)
+        }
         else if (roll < 0.8) {
             triggerEvent();
-        } 
-        // 20% Chance: WILDERNESS FLAVOR EVENT (Instant small rewards/traps)
+        }
         else {
             const event = WILD_EVENTS[Math.floor(Math.random() * WILD_EVENTS.length)];
-            
+
             setPlayer(p => {
                 let ns = { ...p };
                 if (event.reward.type === 'gold') ns.gold += event.reward.val;
@@ -1193,8 +1538,7 @@ export default function App({ initialPlayer }) {
             });
 
             addLog(event.text + " " + event.msg, event.reward.type === 'damage' ? 'danger' : 'success');
-            
-            // Visuals
+
             if (event.reward.type === 'damage') {
                 triggerShake();
                 spawnFloatingText(`-${event.reward.val} HP`, 'damage');
@@ -1209,50 +1553,75 @@ export default function App({ initialPlayer }) {
             if (player.potions > 0 && player.hp < totalMaxHp) {
                 setPlayer(p => ({ ...p, hp: Math.min(totalMaxHp, p.hp + 50), potions: p.potions - 1 }));
                 addLog("Used Health Potion.", 'success');
+                spawnFloatingText("+50 HP", "heal");
+            } else {
+                addLog("Can't use Health Potion now.", 'warning');
             }
         } else {
             if (player.manaPotions > 0 && player.mana < totalMaxMana) {
                 setPlayer(p => ({ ...p, mana: Math.min(totalMaxMana, p.mana + 40), manaPotions: p.manaPotions - 1 }));
                 addLog("Used Mana Potion.", 'success');
+                spawnFloatingText("+40 MP", "heal");
+            } else {
+                addLog("Can't use Mana Potion now.", 'warning');
             }
         }
     };
 
-    // --- Main Render ---
+    const getBackgroundUrl = (locId) => {
+        switch (locId) {
+            case 'town': return ITEM_IMAGES.town_background;
+            case 'forest': return ITEM_IMAGES.forest_background;
+            case 'cave': return ITEM_IMAGES.cave_background;
+            case 'dungeon': return ITEM_IMAGES.dungeon_background;
+            case 'mountain': return ITEM_IMAGES.mountain_background;
+            default: return ITEM_IMAGES.forest_background;
+        }
+    };
+
+    // --- Main Render (Dynamic UI rendering based on state and data arrays) ---
 
     if (gameState === 'CLASS_SELECT') {
         return (
-            <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center p-4 font-mono">
+            <div className="min-h-screen bg-stone-900 text-stone-200 flex items-center justify-center p-4 font-serif">
                 <div className="max-w-5xl w-full">
-                    <h1 className="text-4xl font-bold text-center mb-8 text-yellow-500">Choose Your Destiny</h1>
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <h1 className="text-5xl font-bold text-center mb-10 text-amber-500 drop-shadow-lg">Choose Your Destiny</h1>
+                    <div className="grid md:grid-cols-3 gap-8">
                         {Object.values(CLASSES).map(cls => (
-                            
+
                             <button
                                 key={cls.id}
                                 onClick={() => selectClass(cls.id)}
-                                className="bg-slate-800 p-6 rounded-xl border-2 border-slate-700 hover:border-yellow-500 transition-all flex flex-col items-center text-center group relative overflow-hidden"
+                                className="bg-stone-800 p-6 rounded-xl border-4 border-stone-700 hover:border-amber-500 transition-all flex flex-col items-center text-center group relative overflow-hidden shadow-2xl shadow-black/50 hover:scale-[1.02]"
                             >
-                                <div className="mb-4 transform group-hover:scale-110 transition-transform">
+                                <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent"></div>
+                                <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500 z-10">
                                     <img
-                                        src={cls.image || defaultImg}   // FIXED
+                                        src={cls.image}
                                         alt={cls.name}
-                                        className="w-60 h-60 " // Increased size for visibility
+                                        className="w-60 h-60 object-contain drop-shadow-xl" 
                                     />
                                 </div>
-                                <h2 className="text-2xl font-bold mb-2">{cls.name}</h2>
-                                <p className="text-slate-400 mb-4 text-sm h-10">{cls.desc}</p>
-                                <div className="w-full bg-slate-900/60 p-3 rounded text-xs space-y-1">
+                                <h2 className="text-3xl font-extrabold mb-2 text-amber-400 z-10">{cls.name}</h2>
+                                <p className="text-stone-400 mb-6 text-sm h-10 z-10">{cls.desc}</p>
+                                <div className="w-full bg-stone-900/70 p-4 rounded text-sm space-y-2 border-t border-stone-700 z-10">
                                     <div className="flex justify-between">
                                         <span>HP Bonus:</span>
-                                        <span className={cls.hpBonus >= 0 ? "text-green-400" : "text-red-400"}>
+                                        <span className={cls.hpBonus >= 0 ? "text-red-400 font-bold" : "text-red-600 font-bold"}>
                                             {cls.hpBonus}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between">
-                                        <span>Mana Bonus:</span>
-                                        <span className="text-blue-400">{cls.manaBonus}</span>
+                                        <span>Dmg Bonus:</span>
+                                        <span className={cls.dmgBonus >= 0 ? "text-orange-400 font-bold" : "text-orange-600 font-bold"}>
+                                            {cls.dmgBonus}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex justify-between">
+                                        <span>Crit Chance:</span>
+                                        <span className="text-yellow-400 font-bold">{(cls.critChance * 100).toFixed(0)}%</span>
                                     </div>
                                 </div>
                             </button>
@@ -1265,180 +1634,190 @@ export default function App({ initialPlayer }) {
     }
 
     return (
-        <div className={`min-h-screen bg-slate-900 text-slate-200 font-mono flex flex-col md:flex-row overflow-hidden ${shake ? 'animate-shake' : ''}`}>
+        // Main Container: flex-col on mobile, flex-row on desktop
+        <div className={`h-screen bg-stone-900 text-stone-300 font-serif flex flex-col md:flex-row overflow-hidden ${shake ? 'animate-shake' : ''}`}>
 
-            {/* CSS for shake animation */}
             <style>{`
-        @keyframes shake {
-          0% { transform: translate(1px, 1px) rotate(0deg); }
-          10% { transform: translate(-1px, -2px) rotate(-1deg); }
-          20% { transform: translate(-3px, 0px) rotate(1deg); }
-          30% { transform: translate(3px, 2px) rotate(0deg); }
-          40% { transform: translate(1px, -1px) rotate(1deg); }
-          50% { transform: translate(-1px, 2px) rotate(-1deg); }
-          60% { transform: translate(-3px, 1px) rotate(0deg); }
-          70% { transform: translate(3px, 1px) rotate(-1deg); }
-          80% { transform: translate(-1px, -1px) rotate(1deg); }
-          90% { transform: translate(1px, 2px) rotate(0deg); }
-          100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .animate-shake { animation: shake 0.3s; animation-iteration-count: 1; }
-      `}</style>
+                @keyframes shake {
+                  0% { transform: translate(1px, 1px) rotate(0deg); }
+                  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+                  20% { transform: translate(-3px, 0px) rotate(1deg); }
+                  30% { transform: translate(3px, 2px) rotate(0deg); }
+                  40% { transform: translate(1px, -1px) rotate(1deg); }
+                  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+                  60% { transform: translate(-3px, 1px) rotate(0deg); }
+                  70% { transform: translate(3px, 1px) rotate(-1deg); }
+                  80% { transform: translate(-1px, -1px) rotate(1deg); }
+                  90% { transform: translate(1px, 2px) rotate(0deg); }
+                  100% { transform: translate(1px, -2px) rotate(-1deg); }
+                }
+                .animate-shake { animation: shake 0.3s; animation-iteration-count: 1; }
+                
+                .bg-parchment-texture {
+                    background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="p" width="100" height="100" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="100" y2="100" stroke="%233e332f" stroke-width="1" opacity="0.1" /></pattern></defs><rect width="100%" height="100%" fill="%23f7f1e3" /></svg>');
+                    background-color: #f7f1e3;
+                }
+                .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #333; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #666; border-radius: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #888; }
+                
+                @keyframes forge-glow {
+                    0% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.5), 0 0 10px rgba(255, 140, 0, 0.3); }
+                    50% { box-shadow: 0 0 10px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 140, 0, 0.5); }
+                    100% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.5), 0 0 10px rgba(255, 140, 0, 0.3); }
+                }
 
-            {/* --- SIDEBAR --- */}
-            <div className="w-full md:w-80 bg-slate-800 p-4 border-r border-slate-700 flex flex-col gap-4 shrink-0 z-20">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-xl font-bold text-yellow-500 flex items-center gap-2"><Sword className="w-5 h-5" /> Realms of Text</h1>
-                </div>
+                @keyframes purple-pulse {
+                    0%, 100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 20px rgba(126, 34, 206, 0.4); }
+                    50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.9), 0 0 30px rgba(126, 34, 206, 0.7); }
+                }
 
-                <div className="bg-slate-700 p-3 rounded-lg shadow-md">
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="text-2xl">{CLASSES[player.class]?.icon}</span>
+                .animate-forge-glow { animation: forge-glow 2s infinite alternate; }
+                .animate-purple-pulse { animation: purple-pulse 1.5s infinite; }
+            `}</style>
+
+
+            {/* A. STATS PANEL (Left Fixed Column - Hidden/Full-width on Mobile) */}
+            <div className={`
+                md:w-80 w-full md:flex flex-col gap-4 shrink-0 z-20 overflow-y-auto custom-scrollbar 
+                bg-stone-800/80 backdrop-blur-sm p-4 border-r-4 border-amber-900 shadow-2xl shadow-black/80
+                ${mobileView !== 'stats' && 'hidden md:flex'} 
+            `}>
+                
+                {/* Dynamic Player Stats Block */}
+                <div className="bg-stone-700/50 p-4 rounded-xl shadow-lg border border-amber-700/50">
+                    <div className="flex items-center gap-2 mb-3 border-b border-stone-600 pb-2">
+                        <span className="text-3xl">{CLASSES[player.class]?.icon}</span>
                         <div>
-                            <div className="font-bold leading-none">{player.class ? CLASSES[player.class].name : 'Hero'}</div>
-                            <div className="text-xs text-slate-400">Lvl {player.level}</div>
+                            <div className="font-extrabold text-xl text-amber-400 leading-none">{player.class ? CLASSES[player.class].name : 'Hero'}</div>
+                            <div className="text-sm text-stone-400">Level {player.level}</div>
                         </div>
                     </div>
 
+                    {/* Dynamic Bar Components */}
                     {/* HP Bar */}
-                    <div className="w-full p-[2px] rounded-full bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 shadow-[0_0_10px_rgba(234,179,8,0.4)] mb-1">
-                        <div className="w-full h-4 bg-slate-900 rounded-full relative overflow-hidden">
-                            <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.hp, totalMaxHp, 'hp')}`}
-                                style={{ width: `${Math.min(100, (player.hp / totalMaxHp) * 100)}%` }}>
-                                <div className="w-full h-[40%] bg-white/30 rounded-t-full"></div>
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
-                                {player.hp} / {totalMaxHp} HP
-                            </div>
+                    <div className="w-full h-5 bg-stone-900 rounded-full overflow-hidden border border-red-800 relative mb-2 shadow-inner">
+                        <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.hp, totalMaxHp, 'hp')}`}
+                            style={{ width: `${Math.min(100, (player.hp / totalMaxHp) * 100)}%` }}>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
+                            {player.hp} / {totalMaxHp} HP
                         </div>
                     </div>
                     {/* Mana Bar */}
-                    <div className="w-full p-[2px] rounded-full bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 shadow-[0_0_10px_rgba(234,179,8,0.4)] mb-1">
-                        <div className="w-full h-4 bg-slate-900 rounded-full relative overflow-hidden">
-                            <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.mana, totalMaxMana, 'mana')}`}
-                                style={{ width: `${Math.min(100, (player.mana / totalMaxMana) * 100)}%` }}>
-                                <div className="w-full h-[40%] bg-white/30 rounded-t-full"></div>
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
-                                {player.mana}/{totalMaxMana} MP
-                            </div>
+                    <div className="w-full h-5 bg-stone-900 rounded-full overflow-hidden border border-blue-800 relative mb-2 shadow-inner">
+                        <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.mana, totalMaxMana, 'mana')}`}
+                            style={{ width: `${Math.min(100, (player.mana / totalMaxMana) * 100)}%` }}>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
+                            {player.mana}/{totalMaxMana} MP
                         </div>
                     </div>
                     {/* XP Bar */}
-                    <div className="w-full p-[2px] rounded-full bg-gradient-to-b from-yellow-300 via-yellow-500 to-yellow-700 shadow-[0_0_10px_rgba(234,179,8,0.4)] mb-1">
-                        <div className="w-full h-4 bg-slate-900 rounded-full relative overflow-hidden">
-                            <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.xp, player.xpToNext, 'xp')}`}
-                                style={{ width: `${(player.xp / player.xpToNext) * 100}%` }}>
-                                <div className="w-full h-[40%] bg-white/30 rounded-t-full"></div>
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
-                                {player.xp}/{player.xpToNext} XP
-                            </div>
+                    <div className="w-full h-4 bg-stone-900 rounded-full overflow-hidden border border-amber-800 relative mb-3 shadow-inner">
+                        <div className={`h-full transition-all duration-300 ease-out ${getBarColor(player.xp, player.xpToNext, 'xp')}`}
+                            style={{ width: `${(player.xp / player.xpToNext) * 100}%` }}>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px] md:text-xs">
-                        <div className="flex items-center gap-1"><Coins className="w-3 h-3 text-yellow-400" /> {player.gold}</div>
-                        <div className="flex items-center gap-1">
-                            <Sword className="w-3 h-3 text-blue-400" />
-                            {totalDmg}
-                            {weaponEnchant && <span className="text-purple-400">*</span>}
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <Shield className="w-3 h-3 text-green-400" />
-                            {totalDef}
-                            {armorEnchant && <span className="text-purple-400">*</span>}
+                        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] z-10">
+                            {player.xp}/{player.xpToNext} XP
                         </div>
                     </div>
 
-                    
-                    <div className="mt-2 pt-2 border-t border-slate-600 flex gap-2">
-                        <div className={`w-15 h-auto rounded border transition-all duration-500
-                            ${player.equipment.weapon.enchant
-                                ? getEnchantGlow(player.equipment.weapon.enchant) // 1. Priority: Enchant Glow
-                                : player.equipment.weapon.rarity === 'epic'
-                                    ? 'border-purple-500 shadow-[0_0_10px_#a855f7]' // 2. Epic Glow
-                                    : 'border-slate-500' 
-                                }
-                                    `}>
-                            <img src={getItemImage(player.equipment.weapon.name, player.equipment.weapon.rarity)} className="w-full h-full rounded" />
+                    {/* Core Stats */}
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm pt-2 border-t border-stone-600">
+                        <div className="flex items-center gap-1 text-amber-300 font-bold"><Coins className="w-4 h-4 text-amber-500" /> {player.gold} Gold</div>
+                        <div className="flex items-center gap-1 text-red-300 font-bold">
+                            <Sword className="w-4 h-4 text-red-500" />
+                            {totalDmg} Dmg {weaponEnchant && <span className="text-purple-400 text-xs">+{weaponEnchant.val}</span>}
+                        </div>
+                        <div className="flex items-center gap-1 text-green-300 font-bold">
+                            <Shield className="w-4 h-4 text-green-500" />
+                            {totalDef} Def {armorEnchant && <span className="text-purple-400 text-xs">+{armorEnchant.val}</span>}
+                        </div>
+                        <div className="flex items-center gap-1 text-yellow-300 font-bold">
+                            <Zap className="w-4 h-4 text-yellow-500" />
+                            {(totalCrit * 100).toFixed(1)}% Crit
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dynamic Equipment Slots */}
+                <div className="bg-stone-800/50 p-3 rounded-xl shadow-lg border border-stone-700/50">
+                    <div className="text-sm font-bold text-amber-500 mb-2">EQUIPMENT</div>
+                    <div className="flex flex-col gap-2">
+                        {/* WEAPON SLOT */}
+                        <div className="flex gap-2 items-center">
+                            <div className={`w-12 h-12 rounded border-2 shrink-0 transition-all duration-500 ${player.equipment.weapon.enchant ? getEnchantGlow(player.equipment.weapon.enchant) : player.equipment.weapon.rarity === 'epic' ? 'border-purple-500 shadow-[0_0_10px_#a855f7]' : 'border-stone-500'}`}>
+                                <img src={getItemImage(player.equipment.weapon.name, player.equipment.weapon.rarity)} className="w-full h-full rounded" />
+                            </div>
+                            <div className="flex flex-col text-xs">
+                                <span className={`font-bold ${player.equipment.weapon.enchant ? 'text-purple-300' : 'text-stone-200'}`}>{player.equipment.weapon.name}</span>
+                                <span className="text-stone-400">Lvl {player.equipment.weapon.level} | +{player.equipment.weapon.damage} Dmg</span>
+                                {weaponEnchant && <span className="text-purple-400 text-[10px]">{weaponEnchant.desc}</span>}
+                            </div>
                         </div>
 
                         {/* ARMOR SLOT */}
-                        <div className={`w-15 h-auto rounded border transition-all duration-500
-                                ${player.equipment.armor.enchant
-                                ? getEnchantGlow(player.equipment.armor.enchant)
-                                : player.equipment.armor.rarity === 'epic'
-                                    ? 'border-purple-500 shadow-[0_0_10px_#a855f7]'
-                                    : 'border-slate-500'
-                            }
-                            `}>
-                            <img src={getItemImage(player.equipment.armor.name, player.equipment.armor.rarity)} className="w-full h-full rounded" />
-                        </div>
-
-                        <div className="text-[10px] flex flex-col justify-center text-slate-400">
-                            <div className={player.equipment.weapon.enchant ? 'text-yellow-200' : ''}>
-                                {player.equipment.weapon.name}
+                        <div className="flex gap-2 items-center">
+                            <div className={`w-12 h-12 rounded border-2 shrink-0 transition-all duration-500 ${player.equipment.armor.enchant ? getEnchantGlow(player.equipment.armor.enchant) : player.equipment.armor.rarity === 'epic' ? 'border-purple-500 shadow-[0_0_10px_#a855f7]' : 'border-stone-500'}`}>
+                                <img src={getItemImage(player.equipment.armor.name, player.equipment.armor.rarity)} className="w-full h-full rounded" />
                             </div>
-                            <div className={player.equipment.armor.enchant ? 'text-yellow-200' : ''}>
-                                {player.equipment.armor.name}
+                            <div className="flex flex-col text-xs">
+                                <span className={`font-bold ${player.equipment.armor.enchant ? 'text-purple-300' : 'text-stone-200'}`}>{player.equipment.armor.name}</span>
+                                <span className="text-stone-400">Lvl {player.equipment.armor.level} | +{player.equipment.armor.defense} Def</span>
+                                {armorEnchant && <span className="text-purple-400 text-[10px]">{armorEnchant.desc}</span>}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Active Quests Mini View */}
-                <div className="bg-slate-700 p-3 rounded-lg text-xs">
-                    <div className="font-bold text-slate-400 mb-2 flex justify-between">
+                {/* Dynamic Active Quests Mini View */}
+                <div className="bg-stone-800/50 p-3 rounded-xl text-xs shadow-lg border border-stone-700/50">
+                    <div className="font-bold text-amber-500 mb-2 flex justify-between">
                         <span>ACTIVE BOUNTIES</span>
                         <span>{player.activeQuests.length}/3</span>
                     </div>
-                    {player.activeQuests.length === 0 ? <div className="text-slate-500 italic">No active quests.</div> : (
+                    {player.activeQuests.length === 0 ? <div className="text-stone-500 italic">No active quests.</div> : (
                         <div className="space-y-1">
+                            {/* Dynamic Quest List */}
                             {player.activeQuests.map(q => (
-                                <div key={q.id} className="flex justify-between items-center bg-slate-800 p-1 rounded">
-                                    <span>{q.type === 'kill' ? '⚔️' : '📦'} {q.target}</span>
-                                    <span className={q.current >= q.required || (q.type === 'collect' && player.inventory.find(i => i.name === q.target)?.count >= q.required) ? 'text-green-400' : 'text-yellow-500'}>
+                                <div key={q.id} className="flex justify-between items-center bg-stone-900/50 p-2 rounded">
+                                    <span className='text-stone-300'>{q.type === 'kill' ? '⚔️' : '📦'} {q.target}</span>
+                                    <span className={q.current >= q.required || (q.type === 'collect' && player.inventory.find(i => i.name === q.target)?.count >= q.required) ? 'text-green-400 font-bold' : 'text-yellow-500 font-bold'}>
                                         {q.type === 'collect' ? (player.inventory.find(i => i.name === q.target)?.count || 0) : q.current}/{q.required}
                                     </span>
                                 </div>
                             ))}
                         </div>
                     )}
-                    {location.id === 'town' && <button onClick={() => checkQuestCompletion()} className="w-full mt-2 bg-blue-600 hover:bg-blue-500 py-1 rounded text-center">Claim Rewards</button>}
+                    <button onClick={() => setGameState('QUEST_BOARD')} className="w-full mt-3 bg-blue-700 hover:bg-blue-600 py-1.5 rounded text-center text-sm font-bold active:scale-[0.98]">Go to Board</button>
                 </div>
 
-                <button onClick={() => setGameState('INVENTORY')} className="bg-slate-700 hover:bg-slate-600 p-3 rounded-lg flex items-center justify-between text-xs font-bold">
-                    <div className="flex items-center gap-2"><Backpack className="w-4 h-4" /> Inventory</div>
-                    <span className="bg-slate-900 px-2 rounded">{player.inventory.reduce((acc, i) => acc + i.count, 0)}</span>
+
+                {/* Inventory Access Button - RENDERED IN SIDEBAR (Hidden on Mobile) */}
+                <button 
+                    onClick={() => setGameState('INVENTORY')} 
+                    className="bg-amber-800/40 hover:bg-amber-800/60 p-3 rounded-xl border-2 border-amber-700 flex items-center justify-center text-sm font-bold shadow-xl mt-auto active:scale-[0.98]"
+                >
+                    <div className="flex items-center gap-2"><Backpack className="w-5 h-5" /> Open Backpack</div>
+                    <span className="bg-stone-900 px-3 py-0.5 rounded-full ml-auto text-amber-300">{player.inventory.reduce((acc, i) => acc + i.count, 0)}</span>
                 </button>
-                
-                {/* <div className="flex gap-2 w-full">
-                    <button onClick={saveToSupabase} className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1.5 rounded-md transition-colors" >
-                        <Save className="w-4 h-4" /> Save to Cloud
-                    </button>
-                    <button onClick={handleLogout} className="w-full border border-red-200 text-red-600 hover:bg-red-50 text-sm font-medium py-1.5 rounded-md transition-colors" >
-                        Logout
-                    </button>
-                </div> */}
-                <div className="bg-slate-700 p-3 rounded-lg shadow-md mt-auto">
-                    <div className="flex items-center gap-2 text-yellow-500 font-bold mb-1 text-sm"><Map className="w-4 h-4" /> {location.name}</div>
-                </div>
             </div>
 
-            {/* --- MAIN AREA --- */}
-            <div className="flex-1 flex flex-col h-[100vh] relative">
-
-                {/* Scene Visuals */}
-                <div className="h-55 bg-slate-950 border-b border-slate-700 p-4 flex items-center justify-center relative overflow-hidden shrink-0">
-                    <div className="absolute inset-0 opacity-10 pointer-events-none flex justify-center items-center text-9xl select-none">
-                        {location.id === 'town' ? '🏠' : location.id === 'forest' ? '🌲' : location.id === 'cave' ? '🏔️' : '🏰'}
-                    </div>
-
-                    {/* Floating Combat Text Layer */}
+            {/* B. MAIN LOG & SCENE (Center Column - Takes up all vertical space when active) */}
+            <div className={`flex-1 flex flex-col relative overflow-hidden ${mobileView !== 'log' && 'hidden md:flex'}`}>
+                
+                {/* Scene Visuals (Height reduced for mobile) */}
+                <div 
+                    className="h-[30vh] md:h-[40vh] bg-cover bg-center border-b-4 border-amber-900 shadow-xl shadow-black/50 flex items-center justify-center relative shrink-0"
+                    style={{ backgroundImage: `url(${getBackgroundUrl(location.id)})` }}
+                >
+                    {/* Floating Combat Text Layer (Dynamic) */}
                     <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
                         {floatingTexts.map(ft => (
                             <div key={ft.id}
-                                className={`absolute text-xl font-bold animate-bounce ${ft.color}`}
+                                className={`absolute text-2xl font-black animate-bounce ${ft.color}`}
                                 style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
                             >
                                 {ft.text}
@@ -1446,126 +1825,99 @@ export default function App({ initialPlayer }) {
                         ))}
                     </div>
 
-                    <div className="z-10 text-center w-full max-w-xl">
+                    <div className="z-10 text-center w-full max-w-xl p-4 bg-black/40 rounded-xl">
+                        {/* Dynamic Combat Rendering */}
                         {gameState === 'COMBAT' && enemy && (
                             <div className="animate-in fade-in zoom-in duration-300 flex flex-col items-center">
+                                {/* Enemy Image/Fallback */}
                                 {(() => {
-                                    // 1. Find which enemy type this is (e.g., "Rabid Wolf" matches "Wolf")
                                     const baseKey = Object.keys(ENEMY_IMAGES).find(key => enemy.name.includes(key));
                                     const imageUrl = baseKey ? ENEMY_IMAGES[baseKey] : null;
                                     const hasCustomImage = imageUrl && imageUrl !== 'INSERT_YOUR_URL_HERE';
 
                                     return hasCustomImage ? (
-                                        // SHOW IMAGE
-                                        <div className={`relative mb-2 ${enemy.isElite ? 'drop-shadow-[0_0_15px_rgba(220,38,38,0.8)]' : ''}`}>
+                                        <div className={`relative mb-3 ${enemy.isElite ? 'drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]' : ''}`}>
                                             <img
                                                 src={imageUrl}
                                                 alt={enemy.name}
-                                                className={`w-32 h-32 object-contain ${enemy.isElite ? 'scale-110' : ''}`}
+                                                className={`w-40 h-40 object-contain ${enemy.isElite ? 'scale-110' : ''}`}
                                             />
-                                            {/* Add a red glow/pulse for Elites/Bosses */}
                                             {enemy.isElite && <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full -z-10 animate-pulse"></div>}
                                         </div>
                                     ) : (
-                                        // SHOW EMOJI (Fallback)
-                                        <div className={`text-5xl mb-2 ${enemy.isElite ? 'animate-pulse' : ''}`}>
+                                        <div className={`text-7xl mb-3 ${enemy.isElite ? 'animate-pulse' : ''}`}>
                                             {enemy.isBoss ? '👹' : '👾'}
                                         </div>
                                     );
                                 })()}
 
-                                {/* --- ENEMY STATS --- */}
-                                <div className={`text-lg font-bold ${enemy.isElite ? 'text-red-500' : 'text-red-300'}`}>
-                                    {enemy.name} <span className="text-xs bg-slate-800 px-1 rounded text-slate-400">Lvl {enemy.level}</span>
+                                {/* Dynamic Enemy Stats */}
+                                <div className={`text-2xl font-bold ${enemy.isElite ? 'text-red-400' : 'text-red-200'}`}>
+                                    {enemy.name} <span className="text-sm bg-stone-800 px-2 rounded-full text-stone-400">Lvl {enemy.level}</span>
                                 </div>
-
-                                {/* HP BAR */}
-                                <div className="w-full bg-slate-800 h-3 mt-1 rounded-full overflow-hidden border border-slate-700 relative max-w-[200px]">
+                                <div className="w-full bg-stone-800 h-4 mt-2 rounded-full overflow-hidden border border-red-900 relative max-w-[300px] shadow-inner">
                                     <div className="bg-red-600 h-full transition-all duration-300" style={{ width: `${Math.max(0, (enemy.hp / enemy.maxHp) * 100)}%` }}></div>
-                                    <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-md">
+                                    <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-md">
                                         {enemy.hp} / {enemy.maxHp} HP
                                     </div>
                                 </div>
-
                             </div>
                         )}
 
+                        {/* Dynamic Interactive Event Rendering */}
                         {gameState === 'INTERACTIVE_EVENT' && activeEvent && (
                             <div className="flex flex-col items-center animate-in zoom-in duration-300">
-                                <img src={getItemImage(activeEvent.image)} alt={activeEvent.title} className="w-20 h-20 rounded-xl border-2 border-yellow-500 mb-2 shadow-[0_0_15px_rgba(234,179,8,0.5)]" />
-                                <h2 className="text-2xl font-bold text-yellow-400">{activeEvent.title}</h2>
-                                <p className="text-slate-300 text-sm mt-1 max-w-md">{activeEvent.desc}</p>
+                                <img src={getItemImage(activeEvent.image)} alt={activeEvent.title} className="w-20 h-20 rounded-xl border-4 border-amber-500 mb-3 shadow-2xl shadow-black/50" />
+                                <h2 className="text-3xl font-bold text-amber-400">{activeEvent.title}</h2>
+                                <p className="text-stone-300 text-base mt-2 max-w-md">{activeEvent.desc}</p>
                             </div>
                         )}
-                        {/* TOWN BUILDINGS VISUALS */}
-                        {gameState === 'TAVERN' && (
-                            <div className="flex flex-col items-center">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/3llbtwwc9ihak8hh6xc1wqp9ef0s" alt="taveran" className='w-16 h-16' />
-                                <h2 className="text-xl font-bold text-amber-200">The Rusty Tankard</h2>
-                            </div>
+                        {/* Dynamic Town Buildings Visuals (for flavor only) */}
+                        {['TAVERN', 'ALCHEMIST', 'ARENA_LOBBY', 'QUEST_BOARD', 'SHOP', 'BLACKSMITH'].includes(gameState) && (
+                             <div className="text-stone-400 text-xl font-bold">
+                                 {location.name} - {LOCATIONS.find(l => l.id === location.id)?.desc}
+                             </div>
                         )}
-                        {gameState === 'ALCHEMIST' && (
-                            <div className="flex flex-col items-center">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/d9aa4abhlup1ehdzbic4b3xanr2g" alt="" className='w-16 h-16' />
-                                <h2 className="text-xl font-bold text-green-200">Bubbling Brews</h2>
-                            </div>
-                        )}
-                        {gameState === 'ARENA_LOBBY' && (
-                            <div className="flex flex-col items-center">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/gafv8hvlo9w6tqot95smu2pdbwef" alt="" className='w-16 h-16' />
-                                <h2 className="text-xl font-bold text-red-200">The Arena (Wave {arenaWave})</h2>
-                            </div>
-                        )}
-                        {gameState === 'QUEST_BOARD' && (
-                            <div className="flex flex-col items-center">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/9i4pgcumgp1mtx3idkne3zop8867" alt="Notice Board" className='w-16 h-16' />
-                                <h2 className="text-xl font-bold text-yellow-500">Town Notice Board</h2>
-                            </div>
-                        )}
-                        {gameState === 'IDLE' && <div className="text-slate-500 italic">Adventure awaits...</div>}
-                        {gameState === 'INVENTORY' && <div className="text-xl font-bold text-amber-100 flex flex-col items-center"><Backpack className="w-10 h-10 mb-2" /> Backpack</div>}
-                        {gameState === 'SHOP' && <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/rijfy4ijj5ypknyrcqj9wu69gij8" alt="market" className='w-16 h-16' />}
-                        {gameState === 'BLACKSMITH' && (
-                            <div className="flex flex-col items-center">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/luyt80v4tob11xjct02jlewi0m8s" alt="forge" className='w-16 h-16' />
-                                <h2 className="text-xl font-bold text-slate-300">The Forge & Enchanter</h2>
-                            </div>
-                        )}
+                        {gameState === 'IDLE' && <div className="text-3xl text-amber-500 italic font-bold drop-shadow-lg">Adventure Awaits...</div>}
                     </div>
                 </div>
 
-                {/* Logs */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-900 custom-scrollbar">
-                    {logs.map((log) => (
-                        <div key={log.id} className={`p-2 rounded text-xs md:text-sm border-l-2 animate-fade-in ${log.type === 'danger' ? 'bg-red-950/30 border-red-500 text-red-200' :
-                                log.type === 'success' ? 'bg-green-950/30 border-green-500 text-green-200' :
-                                    log.type === 'warning' ? 'bg-yellow-950/30 border-yellow-500 text-yellow-200' :
-                                        log.type === 'system' ? 'bg-slate-800/50 border-slate-500 text-slate-400' :
-                                            'bg-blue-950/20 border-blue-500 text-blue-200'
-                            }`}>
-                            {log.text}
-                        </div>
-                    ))}
-                    <div ref={logEndRef} />
+                {/* Logs - NARRATIVE SCROLL */}
+                <div className="flex-1 overflow-y-auto p-5 bg-parchment-texture text-stone-900 relative shadow-inner shadow-black/50 custom-scrollbar">
+                    <div className="relative z-10 space-y-2">
+                        {logs.map((log) => (
+                            <div key={log.id} className={`p-2 rounded text-sm border-l-4 animate-fade-in ${log.type === 'danger' ? 'bg-red-100/50 border-red-700 text-red-800 font-bold' :
+                                log.type === 'success' ? 'bg-green-100/50 border-green-700 text-green-800' :
+                                    log.type === 'warning' ? 'bg-yellow-100/50 border-yellow-700 text-yellow-800' :
+                                        log.type === 'system' ? 'bg-stone-100/50 border-stone-700 text-stone-600 italic' :
+                                            'bg-blue-100/50 border-blue-700 text-blue-800'
+                                }`}>
+                                {log.text}
+                            </div>
+                        ))}
+                        <div ref={logEndRef} />
+                    </div>
                 </div>
 
-                {/* Controls Area */}
-                <div className="bg-slate-800 p-5 border-t border-slate-700 min-h-[150px] flex flex-col justify-center shrink-0 z-10">
+                {/* Controls Area (Dynamic Controls based on gameState) - BOTTOM CENTER */}
+                <div className="bg-stone-800/90 backdrop-blur-md p-4 border-t-4 border-amber-900 min-h-[120px] shrink-0 z-10">
                     {gameState === 'COMBAT' && (
                         <div className="w-full max-w-4xl mx-auto">
-                            {/* Skill Bar */}
-                            <div className="grid grid-cols-5 gap-2 mb-2">
+                            {/* Dynamic Skill Bar */}
+                            <div className="grid grid-cols-5 gap-3">
                                 {/* Potions Slots */}
-                                <button onClick={() => usePotion('hp')} className="bg-slate-700 hover:bg-slate-600 p-2 rounded border border-green-900 flex flex-col items-center relative">
-                                    <Heart className="w-5 h-5 text-red-500" />
-                                    <span className="text-[10px] font-bold absolute bottom-0 right-1">{player.potions}</span>
+                                <button onClick={() => usePotion('hp')} className="bg-stone-700 hover:bg-red-800/70 p-3 rounded-xl border-2 border-red-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
+                                    <Heart className="w-6 h-6 text-red-500" />
+                                    <span className="text-xs font-bold absolute bottom-1 right-2 bg-stone-900 px-2 rounded-full">{player.potions}</span>
+                                    <span className='text-[10px]'>Health Pot</span>
                                 </button>
-                                <button onClick={() => usePotion('mana')} className="bg-slate-700 hover:bg-slate-600 p-2 rounded border border-blue-900 flex flex-col items-center relative">
-                                    <Flame className="w-5 h-5 text-blue-500" />
-                                    <span className="text-[10px] font-bold absolute bottom-0 right-1">{player.manaPotions}</span>
+                                <button onClick={() => usePotion('mana')} className="bg-stone-700 hover:bg-blue-800/70 p-3 rounded-xl border-2 border-blue-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
+                                    <Flame className="w-6 h-6 text-blue-500" />
+                                    <span className="text-xs font-bold absolute bottom-1 right-2 bg-stone-900 px-2 rounded-full">{player.manaPotions}</span>
+                                    <span className='text-[10px]'>Mana Pot</span>
                                 </button>
 
-                                {/* Class Skills */}
+                                {/* Dynamic Class Skills Rendering */}
                                 {CLASSES[player.class].skills.map(skill => {
                                     const isLocked = player.level < skill.level;
                                     const onCooldown = (player.cooldowns[skill.id] || 0) > 0;
@@ -1577,20 +1929,21 @@ export default function App({ initialPlayer }) {
                                             disabled={isLocked || onCooldown || noMana}
                                             onClick={() => performAttack(skill)}
                                             className={`
-                                    p-2 rounded border relative flex flex-col items-center justify-center transition-all
-                                    ${isLocked ? 'bg-slate-800 border-slate-700 opacity-50 cursor-not-allowed' :
-                                                    onCooldown ? 'bg-slate-800 border-red-900 cursor-wait' :
-                                                        noMana ? 'bg-slate-800 border-blue-900 opacity-80 cursor-not-allowed' :
-                                                            'bg-slate-700 hover:bg-slate-600 border-slate-500 hover:border-yellow-500 active:scale-95'}
-                                `}
+                                                p-3 rounded-xl border-2 relative flex flex-col items-center justify-center transition-all shadow-md
+                                                ${isLocked ? 'bg-stone-800 border-stone-700 opacity-50 cursor-not-allowed' :
+                                                onCooldown ? 'bg-stone-800 border-red-900 cursor-wait' :
+                                                    noMana ? 'bg-stone-800 border-blue-900 opacity-80 cursor-not-allowed' :
+                                                        'bg-stone-700 border-amber-500 hover:bg-amber-900/50 active:scale-95'}
+                                            `}
                                             title={isLocked ? `Unlocks at Lvl ${skill.level}` : skill.desc}
                                         >
-                                            {isLocked ? <span className="text-xs text-slate-500">Lvl {skill.level}</span> : (
+                                            {isLocked ? <span className="text-sm text-stone-500">Lvl {skill.level}</span> : (
                                                 <>
-                                                    <div className="font-bold text-xs text-center leading-tight mb-1">{skill.name}</div>
-                                                    <div className="text-[10px] text-blue-300">{skill.cost} MP</div>
+                                                    <div className="font-bold text-sm text-center leading-tight mb-1">{skill.name}</div>
+                                                    <div className="text-xs text-blue-300">{skill.cost} MP | {skill.cd > 0 ? `${skill.cd} CD` : 'Basic'}</div>
+                                                    {/* Dynamic Cooldown Indicator */}
                                                     {onCooldown && (
-                                                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded font-bold text-red-400 text-lg">
+                                                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center rounded-xl font-bold text-red-400 text-2xl">
                                                             {player.cooldowns[skill.id]}
                                                         </div>
                                                     )}
@@ -1605,388 +1958,227 @@ export default function App({ initialPlayer }) {
 
                     {gameState === 'INTERACTIVE_EVENT' && activeEvent && (
                         <div className="flex flex-col items-center justify-center gap-3 w-full max-w-2xl mx-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                                {/* Dynamic Event Choices */}
                                 {activeEvent.choices.map((choice, idx) => (
-                                    <button key={idx} onClick={() => resolveEvent(choice)} className="bg-slate-700 hover:bg-slate-600 border border-slate-500 p-3 rounded flex flex-col items-center justify-center gap-1 group">
-                                        <div className="font-bold group-hover:text-yellow-400">{choice.text}</div>
-                                        {choice.chance < 1.0 && <div className="text-[10px] text-red-400">Risk: {(100 - choice.chance * 100).toFixed(0)}% Fail</div>}
+                                    <button 
+                                        key={idx} 
+                                        onClick={() => resolveEvent(choice)} 
+                                        className="bg-stone-700 hover:bg-amber-900/50 border-2 border-amber-500 p-4 rounded-xl flex flex-col items-center justify-center gap-1 group shadow-lg active:scale-[0.98]"
+                                    >
+                                        <div className="font-bold text-lg group-hover:text-amber-300">{choice.text}</div>
+                                        {choice.chance < 1.0 && <div className="text-xs text-red-400">Risk: {(100 - choice.chance * 100).toFixed(0)}% Fail</div>}
                                     </button>
                                 ))}
                             </div>
                         </div>
                     )}
 
-                    {gameState === 'TAVERN' && (
-                        <div className="flex gap-4 justify-center items-center h-full w-full">
-                            <button onClick={handleRest} className="bg-green-800 hover:bg-green-700 p-4 rounded border border-green-600 flex flex-col items-center min-w-[120px]">
-                                <div className="text-lg font-bold mb-1">Rest</div>
-                                <div className="text-xs text-green-300 mb-2">Restore All</div>
-                                <div className="text-yellow-400 font-bold">50 G</div>
-                            </button>
-                            <button onClick={handleGamble} className="bg-amber-800 hover:bg-amber-700 p-4 rounded border border-amber-600 flex flex-col items-center min-w-[120px]">
-                                <div className="text-lg font-bold mb-1">Gamble</div>
-                                <div className="text-xs text-amber-300 mb-2">Roll Dice (7+)</div>
-                                <div className="text-yellow-400 font-bold">10 G</div>
-                            </button>
-                            <button onClick={() => setGameState('IDLE')} className="bg-slate-600 hover:bg-slate-500 px-6 py-2 rounded h-fit">Leave</button>
-                        </div>
-                    )}
-
-                    {/* ARENA LOBBY */}
                     {gameState === 'ARENA_LOBBY' && (
                         <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
                             <div className="text-center">
-                                <div className="text-3xl font-bold text-red-500">WAVE {arenaWave}</div>
-                                <div className="text-slate-400">Difficulty Multiplier: x{(1 + (arenaWave * 0.2)).toFixed(1)}</div>
+                                <div className="text-4xl font-extrabold text-red-500">WAVE {arenaWave}</div>
+                                <div className="text-stone-400">Difficulty Multiplier: x{(1 + (arenaWave * 0.2)).toFixed(1)}</div>
                             </div>
-                            <div className="flex gap-4">
-                                <button onClick={() => generateEnemy('arena')} className="bg-red-700 hover:bg-red-600 p-4 rounded-lg border-2 border-red-500 flex flex-col items-center min-w-[160px] animate-pulse">
-                                    <Swords className="w-8 h-8 mb-2" />
-                                    <div className="text-xl font-bold">FIGHT!</div>
+                            <div className="flex gap-6">
+                                <button onClick={() => generateEnemy('arena')} className="bg-red-800 hover:bg-red-700 p-4 rounded-xl border-4 border-red-500 flex flex-col items-center min-w-[200px] animate-pulse shadow-2xl shadow-red-900/50 active:scale-[0.98]">
+                                    <Swords className="w-10 h-10 mb-2" />
+                                    <div className="text-2xl font-bold">ENTER ARENA</div>
                                 </button>
-                                <button onClick={() => { setArenaWave(1); setGameState('IDLE'); }} className="bg-slate-600 hover:bg-slate-500 px-6 py-4 rounded-lg border border-slate-500">
-                                    Retreat (Reset)
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ALCHEMIST UI */}
-                    {gameState === 'ALCHEMIST' && (
-                        <div className="flex flex-col h-full w-full">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-y-auto max-h-[120px] mb-2">
-                                {CRAFTING_RECIPES.map((recipe, idx) => (
-                                    <button key={idx} onClick={() => handleCraft(recipe)} className="bg-slate-700 hover:bg-slate-600 p-2 rounded flex justify-between items-center border border-slate-600 group">
-                                        <div className="flex flex-col items-start">
-                                            <div className="font-bold text-green-300">{recipe.name}</div>
-                                            <div className="text-[10px] text-slate-400">
-                                                {recipe.ingredients.map(ing => `${ing.count}x ${ing.name}`).join(', ')}
-                                            </div>
-                                        </div>
-                                        <div className="text-yellow-400 font-bold text-sm">{recipe.cost} G</div>
-                                    </button>
-                                ))}
-                            </div>
-                            <button onClick={() => setGameState('IDLE')} className="mt-auto bg-slate-600 hover:bg-slate-500 w-full py-2 rounded">Leave</button>
-                        </div>
-                    )}
-
-                    {gameState === 'QUEST_BOARD' && (
-                        <div className="w-full h-full flex flex-col">
-                            <div className="flex gap-2 mb-2 justify-center">
-                                <button onClick={generateRandomQuests} className="text-xs bg-slate-700 px-3 py-1 rounded hover:bg-slate-600">Refresh Notices</button>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 overflow-y-auto max-h-[120px]">
-                                {availableQuests.length === 0 ? <div className="text-slate-500 text-center col-span-3">No more notices. Check back later.</div> :
-                                    availableQuests.map(q => (
-                                        <button key={q.id} onClick={() => acceptQuest(q)} className="bg-amber-900/30 border border-amber-700/50 p-2 rounded text-left hover:bg-amber-900/50 transition-colors group">
-                                            <div className="font-bold text-amber-500 text-sm group-hover:text-amber-400">{q.type === 'kill' ? 'Wanted' : 'Request'}: {q.target}</div>
-                                            <div className="text-xs text-slate-400 mb-1">{q.type === 'kill' ? `Hunt ${q.required} targets` : `Gather ${q.required} items`}</div>
-                                            <div className="text-xs text-yellow-200 font-bold">{q.rewardGold} G • {q.rewardXp} XP</div>
-                                        </button>
-                                    ))}
-                            </div>
-                            <button onClick={() => setGameState('IDLE')} className="mt-2 bg-slate-600 w-full py-1 rounded text-sm">Leave Board</button>
-                        </div>
-                    )}
-
-                    {gameState === 'INVENTORY' && (
-                        <div className="w-full h-full flex flex-col">
-                            <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-sm font-bold text-slate-300">Backpack</h3>
-                                {location.id === 'town' && player.inventory.length > 0 && (
-                                    <button onClick={sellAllLoot} className="text-[10px] bg-yellow-700 px-2 py-1 rounded hover:bg-yellow-600">Sell All ({player.inventory.reduce((a, b) => a + (calculateItemValue(b) * b.count), 0)}G)</button>
-                                )}
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2 overflow-y-auto max-h-[300px] custom-scrollbar">
-                                {player.inventory.map((item, idx) => {
-                                    const visual = getItemImage(item.name, item.rarity);
-                                    const isEquippable = item.type === 'weapon' || item.type === 'armor';
-                                    const itemValue = calculateItemValue(item);
-
-                                    let glowClass = 'border-slate-600';
-                                    if (item.enchant) {
-                                        glowClass = getEnchantGlow(item.enchant);
-                                    } else if (item.rarity === 'epic') {
-                                        glowClass = 'border-purple-500 shadow-sm shadow-purple-900';
-                                    }
-                                    return (
-                                        <div key={idx} className={`bg-slate-700 p-2 rounded text-xs flex gap-2 relative group border transition-all ${glowClass}`}>
-
-                                            <div className="shrink-0">
-                                                <img src={visual} alt={item.name} className="w-10 h-10 rounded border border-slate-500" />
-                                            </div>
-                                            <div className="flex flex-col w-full overflow-hidden justify-between">
-                                                <div className="flex justify-between items-start">
-                                                    <span className={`font-bold truncate ${item.rarity === 'epic' ? 'text-purple-300' : 'text-slate-200'}`}>{item.name}</span>
-                                                    {item.level && <span className="text-[10px] bg-slate-800 px-1 rounded text-slate-400">Lvl {item.level}</span>}
-                                                </div>
-                                                <div className="flex gap-2 text-[10px] text-slate-400 items-center">
-                                                    {item.damage > 0 && <span className="flex items-center gap-1 text-blue-300"><Sword className="w-3 h-3" /> {item.damage}</span>}
-                                                    {item.defense > 0 && <span className="flex items-center gap-1 text-green-300"><Shield className="w-3 h-3" /> {item.defense}</span>}
-                                                    {item.count > 1 && <span>x{item.count}</span>}
-                                                </div>
-                                                {item.enchant && <div className="text-[9px] text-purple-300 mt-1">✨ {item.enchant.name}</div>}
-                                            </div>
-                                            <div className="flex flex-col gap-1 shrink-0 min-w-[50px]">
-                                                <div className="text-right text-yellow-500 font-bold text-[10px]">{itemValue} G</div>
-
-                                                {isEquippable && (
-                                                    <button onClick={() => handleEquipItem(idx)} className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] py-1 rounded text-center shadow">
-                                                        Equip
-                                                    </button>
-                                                )}
-                                                {location.id === 'town' && (
-                                                    <button onClick={() => sellItem(idx)} className="bg-red-900/50 hover:bg-red-700 text-red-200 text-[10px] py-1 rounded text-center">
-                                                        Sell
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                                {player.inventory.length === 0 && <div className="col-span-2 text-center text-slate-500 italic py-4">Bag is empty</div>}
-                            </div>
-                            <button onClick={() => setGameState('IDLE')} className="mt-auto bg-slate-600 w-full py-2 rounded text-xs">Close</button>
-                        </div>
-                    )}
-
-                    {gameState === 'SHOP' && (
-                        <div className="flex flex-col h-full">
-                            <div className=" float-animation flex gap-2 mb-2 overflow-x-auto pb-2">
-                                {SHOP_ITEMS.map(item => {
-                                    if (item.classReq && item.classReq !== 'all' && item.classReq !== player.class) return null;
-                                    const visual = getItemImage(item.name);
-                                    return (
-                                       
-                                        <button
-                                            key={item.id}
-                                            onClick={() => handleBuyItem(item)}
-                                            className=" relative flex flex-col items-center justify-center min-w-[100px] p-4 group"
-                                        >
-                                            {/* 1. The Background/Base */}
-                                            <div className="absolute inset-0 bg-slate-900 rounded-lg border border-slate-600 opacity-80 group-hover:bg-slate-800"></div>
-                                            <div className="absolute inset-0 border-2 border-yellow-500 rounded-lg pointer-events-none">
-                                                <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-yellow-300"></div>
-                                                <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-yellow-300"></div>
-                                                <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-yellow-300"></div>
-                                                <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-yellow-300"></div>
-                                            </div>
-
-                                            {/* 3. Actual Content (Z-index ensures it sits right) */}
-                                            <div className="relative z-10 flex flex-col items-center gap-1">
-                                                <img src={visual} alt={item.name} className="w-10 h-10 rounded border border-slate-500 shadow-inner" />
-                                                <span className="font-bold text-xs text-yellow-400 tracking-wide">{item.name}</span>
-                                                <span className="text-xs text-slate-400">{item.cost} G</span>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                            <button onClick={() => setGameState('IDLE')} className="w-full bg-slate-600 py-2 rounded mt-auto">Leave Shop</button>
-                        </div>
-                    )}
-
-                    {gameState === 'BLACKSMITH' && (
-                        <div className="flex flex-col items-center h-full w-full p-2 overflow-y-auto">
-
-                            <h2 className="text-lg font-bold text-slate-300 mb-4 flex gap-2">
-                                <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/uj9bs094jggo7sprmkkahlcdeunx"
-                                    alt=""
-                                    className='w-5 h-auto -rotate-45' /> The Forge
-                            </h2>
-
-                            {/* --- TAB TOGGLES --- */}
-                            <div className="flex gap-2 mb-6 bg-slate-800 p-1 rounded-lg border border-slate-700">
-                                <button
-                                    onClick={() => setForgeMode('UPGRADE')}
-                                    className={`px-4 py-1 text-sm rounded transition-all ${forgeMode === 'UPGRADE'
-                                        ? 'bg-slate-600 text-white font-bold shadow'
-                                        : 'text-slate-400 hover:text-slate-200'
-                                        }`}
-                                >
-                                    Refine
-                                </button>
-                                <button
-                                    onClick={() => setForgeMode('ENCHANT')}
-                                    className={`px-4 py-1 text-sm rounded transition-all flex gap-1 items-center ${forgeMode === 'ENCHANT'
-                                        ? 'bg-purple-900/50 text-purple-200 font-bold shadow border border-purple-500/30'
-                                        : 'text-slate-400 hover:text-purple-300'
-                                        }`}
-                                >
-                                    <Sparkles className="w-3 h-3" /> Enchant
+                                <button onClick={() => { setArenaWave(1); setGameState('IDLE'); }} className="bg-stone-600 hover:bg-stone-500 px-6 py-4 rounded-xl border border-stone-500 active:scale-[0.98]">
+                                    Retreat (Reset Wave)
                                 </button>
                             </div>
-
-                            {/* --- UPGRADE SECTION (Only shows if forgeMode is UPGRADE) --- */}
-                            {forgeMode === 'UPGRADE' && (
-                                <div className="flex gap-4 justify-center items-center mb-6 animate-in fade-in duration-300">{/* Weapon Upgrade Button */}
-                                    <button onClick={() => {
-                                        const cost = player.equipment.weapon.level * 100;
-                                        if (player.gold >= cost) {
-                                            setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, weapon: { ...p.equipment.weapon, level: p.equipment.weapon.level + 1, damage: p.equipment.weapon.damage + 3 } } }));
-                                            addLog(`Upgraded Weapon to +${player.equipment.weapon.level + 1}!`, 'success');
-                                        } else addLog(`Need ${cost} Gold`, 'error');
-                                    }} className="bg-slate-700 hover:bg-slate-600 p-4 rounded border border-slate-600 flex flex-col items-center min-w-[140px] transition-colors">
-                                        <div className=" float-animation relative w-16 h-16 flex items-center justify-center mb-2 shrink-0">
-                                            <div className="absolute inset-0 z-20 pointer-events-none rounded-md overflow-hidden shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                                                <div className="absolute inset-0 border-2 border-yellow-700/80 rounded-md"></div>
-                                                <div className="absolute inset-[2px] border border-yellow-500/50 rounded-sm"></div>
-                                                <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-yellow-300 bg-yellow-900/20"></div>
-                                            </div>
-                                            <div className="absolute inset-1 bg-slate-900/80 z-0 rounded-sm border border-slate-700 shadow-inner"></div>
-                                            <img
-                                                src={getItemImage(player.equipment.weapon.name, player.equipment.weapon.rarity)}
-                                                alt="Weapon"
-                                                className="relative w-10 h-10 rounded-sm z-10"
-                                            />
-                                        </div>
-                                        <div className="text-sm font-bold mb-1">Upgrade Weapon</div>
-                                        <div className="text-xs text-slate-400 mb-2">+3 Dmg</div>
-                                        <div className="text-yellow-400 font-bold">{player.equipment.weapon.level * 100} G</div>
-                                    </button>
-
-                                    <button onClick={() => {
-                                        const cost = player.equipment.armor.level * 100;
-                                        if (player.gold >= cost) {
-                                            setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, armor: { ...p.equipment.armor, level: p.equipment.armor.level + 1, defense: p.equipment.armor.defense + 2 } } }));
-                                            addLog(`Upgraded Armor to +${player.equipment.armor.level + 1}!`, 'success');
-                                        } else addLog(`Need ${cost} Gold`, 'error');
-                                    }} className="bg-slate-700 hover:bg-slate-600 p-4 rounded border border-slate-600 flex flex-col items-center min-w-[140px] transition-colors">
-                                        <div className="float-animation relative w-16 h-16 flex items-center justify-center mb-2 shrink-0">
-                                            <div className="absolute inset-0 z-20 pointer-events-none rounded-md overflow-hidden shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                                                <div className="absolute inset-0 border-2 border-yellow-700/80 rounded-md"></div>
-                                                <div className="absolute inset-[2px] border border-yellow-500/50 rounded-sm"></div>
-                                                <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-yellow-300 bg-yellow-900/20"></div>
-                                                <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-yellow-300 bg-yellow-900/20"></div>
-                                            </div>
-                                            <div className="absolute inset-1 bg-slate-900/80 z-0 rounded-sm border border-slate-700 shadow-inner"></div>
-                                            <img
-                                                src={getItemImage(player.equipment.armor.name, player.equipment.armor.rarity)}
-                                                alt="Weapon"
-                                                className="relative w-10 h-10 rounded-sm z-10"
-                                            />
-                                        </div>
-                                        <div className="text-sm font-bold mb-1">Upgrade Armor</div>
-                                        <div className="text-xs text-slate-400 mb-2">+2 Def</div>
-                                        <div className="text-yellow-400 font-bold">{player.equipment.armor.level * 100} G</div>
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* --- ENCHANT SECTION (Only shows if forgeMode is ENCHANT) --- */}
-                            {forgeMode === 'ENCHANT' && (
-                                <div className="bg-slate-800 p-4 rounded-xl border border-purple-500/50 w-full max-w-md mb-4 animate-in slide-in-from-right-4 duration-300">
-                                    <div className="text-center text-purple-300 font-bold mb-2 flex items-center justify-center gap-2">
-                                        <Sparkles className="w-4 h-4" /> Enchant Gear (200 G)
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <button onClick={() => handleEnchant('weapon')} className="bg-slate-700 hover:bg-slate-600 p-3 rounded border border-purple-900 group relative overflow-hidden">
-                                            <div className="text-xs text-slate-400">Current Weapon Effect</div>
-                                            <div className="font-bold text-purple-200 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
-                                                {weaponEnchant ? weaponEnchant.name : 'None'}
-                                            </div>
-                                            <div className="text-[10px] text-slate-500 h-4 overflow-hidden">{weaponEnchant?.desc || 'No magic'}</div>
-                                            <div className="mt-2 text-yellow-500 font-bold text-xs group-hover:scale-110 transition-transform">Enchant</div>
-                                        </button>
-
-                                        <button onClick={() => handleEnchant('armor')} className="bg-slate-700 hover:bg-slate-600 p-3 rounded border border-purple-900 group relative overflow-hidden">
-                                            <div className="text-xs text-slate-400">Current Armor Effect</div>
-                                            <div className="font-bold text-purple-200 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
-                                                {armorEnchant ? armorEnchant.name : 'None'}
-                                            </div>
-                                            <div className="text-[10px] text-slate-500 h-4 overflow-hidden">{armorEnchant?.desc || 'No magic'}</div>
-                                            <div className="mt-2 text-yellow-500 font-bold text-xs group-hover:scale-110 transition-transform">Enchant</div>
-                                        </button>
-                                    </div>
-                                    <div className="mt-4 text-center text-[10px] text-purple-400/60 italic">
-                                        Warning: Enchanting replaces existing effects.
-                                    </div>
-                                </div>
-                            )}
-
-                            <button onClick={() => setGameState('IDLE')} className="bg-slate-600 hover:bg-slate-500 px-6 py-2 rounded h-fit text-sm mt-auto">Leave</button>
                         </div>
                     )}
 
                     {gameState === 'IDLE' && (
-                        <div className="flex flex-col gap-2">
-                            {location.id === 'town' ? (
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                    <button onClick={() => setGameState('SHOP')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/rijfy4ijj5ypknyrcqj9wu69gij8" alt="market" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Market</span>
-                                    </button>
-                                    <button onClick={() => { setGameState('QUEST_BOARD'); if (availableQuests.length === 0) generateRandomQuests(); }} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/9i4pgcumgp1mtx3idkne3zop8867" alt="Notice Board" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Notice Board</span>
-                                    </button>
-                                    <button onClick={() => setGameState('BLACKSMITH')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/luyt80v4tob11xjct02jlewi0m8s" alt="forge" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Blacksmith</span>
-                                    </button>
-                                    <button onClick={() => setGameState('TAVERN')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/3llbtwwc9ihak8hh6xc1wqp9ef0s" alt="taveran" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Tavern</span>
-                                    </button>
-                                    <button onClick={() => setGameState('ALCHEMIST')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/d9aa4abhlup1ehdzbic4b3xanr2g" alt="" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Alchemist</span>
-                                    </button>
-                                    <button onClick={() => setGameState('ARENA_LOBBY')} className="bg-slate-800 hover:bg-slate-700 p-3 rounded border border-slate-700 flex flex-col items-center group">
-                                        <img src="https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/gafv8hvlo9w6tqot95smu2pdbwef" alt="" className='w-10 h-10' />
-                                        <span className="text-xs font-bold">Arena</span>
-                                    </button>
-                                    
-                                    
-                                </div>
-                            ) : (
+                        <div className="flex flex-col gap-3">
+                            {location.id !== 'town' ? (
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between text-xs text-slate-400 px-1">
-                                        <span>Danger Level</span>
+                                    <div className="flex justify-between text-sm text-stone-400 px-1">
+                                        <span>Zone Cleared Progress</span>
+                                        {/* Dynamic Progress Display */}
                                         <span>{player.zoneProgress[location.id] || 0}%</span>
                                     </div>
-                                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden mb-1">
+                                    {/* Dynamic Progress Bar */}
+                                    <div className="w-full bg-stone-800 h-3 rounded-full overflow-hidden mb-2 shadow-inner">
                                         <div className="bg-red-600 h-full transition-all duration-500" style={{ width: `${player.zoneProgress[location.id] || 0}%` }}></div>
                                     </div>
+                                    {/* Dynamic Explore/Boss Button */}
                                     {(player.zoneProgress[location.id] || 0) >= 100 ? (
-                                        <button onClick={() => generateEnemy('boss')} className="w-full bg-purple-700 hover:bg-purple-600 text-white py-3 rounded-lg font-bold text-lg shadow-lg flex justify-center items-center gap-2 animate-pulse">
-                                            <Crown className="w-5 h-5" /> CHALLENGE BOSS
+                                        <button onClick={() => generateEnemy('boss')} className="w-full bg-purple-700 hover:bg-purple-600 text-white py-4 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-purple-900 flex justify-center items-center gap-3 animate-pulse border-4 border-purple-500 active:scale-95">
+                                            <Crown className="w-6 h-6" /> CHALLENGE BOSS
                                         </button>
                                     ) : (
-                                        <button onClick={explore} className="w-full bg-red-700 hover:bg-red-600 text-white py-3 rounded-lg font-bold text-lg shadow-lg flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                                            <Map className="w-5 h-5" /> EXPLORE AREA
+                                        <button onClick={explore} className="w-full bg-amber-600 hover:bg-amber-500 text-stone-900 py-4 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-amber-900 flex justify-center items-center gap-3 active:scale-95 transition-transform border-4 border-amber-400">
+                                            <Map className="w-6 h-6" /> EXPLORE WILDERNESS
                                         </button>
                                     )}
                                 </div>
+                            ) : (
+                                <div className="grid grid-cols-3 md:grid-cols-6 gap-3 pt-2">
+                                    {/* Dynamic Town Hub Options */}
+                                    {[
+                                        { state: 'SHOP', name: 'Market', icon: ITEM_IMAGES.market },
+                                        { state: 'QUEST_BOARD', name: 'Board', icon: ITEM_IMAGES.notice_board },
+                                        { state: 'BLACKSMITH', name: 'Forge', icon: ITEM_IMAGES.forge },
+                                        { state: 'TAVERN', name: 'Tavern', icon: ITEM_IMAGES.tavern },
+                                        { state: 'ALCHEMIST', name: 'Alchemist', icon: ITEM_IMAGES.alchemist },
+                                        { state: 'ARENA_LOBBY', name: 'Arena', icon: ITEM_IMAGES.arena }
+                                    ].map(btn => (
+                                        <button
+                                            key={btn.state}
+                                            onClick={() => setGameState(btn.state)}
+                                            disabled={isSiegeActive && btn.state !== 'COMBAT'}
+                                            className={`bg-stone-700 p-3 rounded-xl border-2 border-stone-600 flex flex-col items-center group shadow-md transition-all active:scale-[0.98] ${isSiegeActive ? 'opacity-50 cursor-not-allowed' : 'hover:bg-stone-600 hover:border-amber-500'}`}
+                                        >
+                                            <img src={btn.icon} alt={btn.name} className='w-8 h-8 mb-1' />
+                                            <span className="text-xs font-bold">{btn.name}</span>
+                                        </button>
+                                    ))}
+                                    <button onClick={explore} className="col-span-6 bg-stone-700 hover:bg-stone-600 py-3 rounded-xl font-bold border-2 border-stone-600 text-lg active:scale-[0.98]">Wander Town (Flavor)</button>
+                                </div>
                             )}
 
-                            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar mt-2">
-                                {LOCATIONS.map(loc => (
-                                    <button key={loc.id} onClick={() => { setLocation(loc); setGameState('IDLE'); addLog(`Arrived at ${loc.name}.`, 'system'); }} disabled={location.id === loc.id}
-                                        className={`px-4 py-2 rounded text-xs border whitespace-nowrap ${location.id === loc.id ? 'bg-slate-700 border-slate-500 text-slate-400' : 'bg-slate-800 border-slate-600 hover:bg-slate-700'}`}>
-                                        {loc.id === 'town' ? '🏠 ' : ''}{loc.name}
-                                    </button>
-                                ))}
-                                <div className="flex gap-2 w-full">
-                                    <button onClick={saveToSupabase} className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-1.5 rounded-md transition-colors" >
-                                        <Save className="w-4 h-4" /> Save to Cloud
-                                    </button>
-                                    <button onClick={handleLogout} className="w-full border border-red-200 text-red-600 hover:bg-red-50 text-sm font-medium py-1.5 rounded-md transition-colors" >
-                                        Logout
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     )}
-
                 </div>
             </div>
+
+            {/* C. NAVIGATION/MAP PANEL (Right Fixed Column - Hidden/Full-width on Mobile) */}
+            <div className={`
+                md:w-64 w-full md:flex flex-col gap-4 shrink-0 z-20 overflow-y-auto custom-scrollbar
+                bg-stone-800/80 backdrop-blur-sm p-4 border-l-4 border-amber-900 shadow-2xl shadow-black/80
+                ${mobileView !== 'map' && 'hidden md:flex'} 
+            `}>
+                 <div className="bg-stone-700/50 p-3 rounded-xl shadow-lg border border-amber-700/50">
+                    <div className="flex items-center gap-2 text-amber-500 font-bold mb-2 text-xl border-b border-stone-600 pb-2">
+                        <Map className="w-5 h-5" /> {location.name}
+                    </div>
+                    <div className="text-sm text-stone-400">{location.desc}</div>
+                </div>
+
+                <div className="flex flex-col gap-2 overflow-y-auto flex-1 pb-2 custom-scrollbar">
+                    <h3 className="text-amber-500 font-bold text-sm mt-1 mb-1">DESTINATIONS</h3>
+                    {LOCATIONS.map(loc => (
+                        <button
+                            key={loc.id}
+                            disabled={location.id === loc.id}
+                            className={`px-3 py-2 rounded text-sm border whitespace-nowrap text-left transition-all active:scale-[0.98] ${location.id === loc.id ? 'bg-amber-700/50 border-amber-500 text-stone-900 font-bold' : 'bg-stone-700 hover:bg-stone-600 border-stone-600'}`}
+                            onClick={() => {
+                                setLocation(loc);
+                                setGameState('IDLE');
+
+                                if (loc.id === 'town') {
+                                    if (Math.random() < 0.1 && !isSiegeActive) { 
+                                        setIsSiegeActive(true);
+                                        setSiegeDiscount(false);
+
+                                        setEnemy({
+                                            name: 'Siege Captain',
+                                            level: player.level + 1,
+                                            maxHp: player.level * 25 + 100,
+                                            hp: player.level * 25 + 100,
+                                            damage: player.level * 4 + 10,
+                                            exp: 100,
+                                            isSiege: true,
+                                            isElite: true
+                                        });
+
+                                        setGameState('COMBAT');
+                                        addLog("🔥 TOWN UNDER ATTACK! Defeat the Captain to access shops!", "danger");
+                                        spawnFloatingText("INVASION!", "damage");
+                                        triggerShake();
+                                    } else {
+                                        addLog(`Welcome to ${loc.name}.`, 'system');
+                                    }
+                                } else {
+                                    addLog(`Arrived at ${loc.name}.`, 'system');
+                                }
+                            }}
+                        >
+                            <span className='font-bold'>{loc.id === 'town' ? '🏠 ' : '🌲 '}{loc.name}</span>
+                            <span className='text-xs text-stone-400 block'>D: {loc.difficulty}</span>
+                        </button>
+                    ))}
+                </div>
+
+
+                {/* Save/Logout Buttons */}
+                <div className="flex flex-col gap-2 mt-auto pt-4 border-t border-stone-700">
+                    <button onClick={saveToSupabase} className="flex items-center justify-center gap-2 w-full bg-green-700 hover:bg-green-600 text-white text-sm font-bold py-2 rounded-xl transition-colors shadow-lg shadow-black/30 active:scale-[0.98]" >
+                        <Save className="w-4 h-4" /> Save to Cloud
+                    </button>
+                    <button onClick={handleLogout} className="w-full border border-red-500 text-red-400 hover:bg-red-900/50 text-sm font-bold py-2 rounded-xl transition-colors shadow-lg shadow-black/30 active:scale-[0.98]" >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            {/* NEW: MOBILE NAVIGATION BAR (Always visible on small screens) */}
+            <div className="md:hidden flex justify-around items-center h-16 bg-stone-900 border-t-4 border-amber-900 z-50 shrink-0">
+                <button
+                    onClick={() => setMobileView('stats')}
+                    className={`flex flex-col items-center text-xs font-bold p-1 rounded transition-colors active:scale-95 ${mobileView === 'stats' ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'}`}
+                >
+                    <User className="w-5 h-5" />
+                    Stats
+                </button>
+                <button
+                    onClick={() => setMobileView('log')}
+                    className={`flex flex-col items-center text-xs font-bold p-1 rounded transition-colors active:scale-95 ${mobileView === 'log' ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'}`}
+                >
+                    <Scroll className="w-5 h-5" />
+                    Log/Action
+                </button>
+                <button
+                    onClick={() => setMobileView('map')}
+                    className={`flex flex-col items-center text-xs font-bold p-1 rounded transition-colors active:scale-95 ${mobileView === 'map' ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'}`}
+                >
+                    <Map className="w-5 h-5" />
+                    Map
+                </button>
+            </div>
+
+
+            {/* D. GAMESTATE MODALS (Overlay) */}
+            <GameModal
+                gameState={gameState}
+                setGameState={setGameState}
+                player={player}
+                setPlayer={setPlayer}
+                totalMaxHp={totalMaxHp}
+                totalMaxMana={totalMaxMana}
+                totalCrit={totalCrit}
+                totalDmg={totalDmg}
+                totalDef={totalDef}
+                location={location}
+                addLog={addLog}
+                getItemImage={getItemImage}
+                calculateItemValue={calculateItemValue}
+                handleBuyItem={handleBuyItem}
+                handleCraft={handleCraft}
+                CRAFTING_RECIPES={CRAFTING_RECIPES}
+                SHOP_ITEMS={SHOP_ITEMS}
+                handleEquipItem={handleEquipItem}
+                sellItem={sellItem}
+                sellAllLoot={sellAllLoot}
+                handleRest={handleRest}
+                handleGamble={handleGamble}
+                generateRandomQuests={generateRandomQuests}
+                availableQuests={availableQuests}
+                acceptQuest={acceptQuest}
+                checkQuestCompletion={checkQuestCompletion}
+                setForgeMode={setForgeMode}
+                forgeMode={forgeMode}
+                handleEnchant={handleEnchant}
+                weaponEnchant={weaponEnchant}
+                armorEnchant={armorEnchant}
+                getEnchantGlow={getEnchantGlow}
+                siegeDiscount={siegeDiscount}
+            />
+
         </div>
     );
 }
