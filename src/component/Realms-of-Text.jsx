@@ -8,7 +8,7 @@ import {
     Beer, Dices, Crown, AlertTriangle, HelpCircle, FlaskConical, Swords, Clock
 } from 'lucide-react';
 // Assuming 'supabase' and related functions are correctly imported from a sibling file.
-import { supabase, saveToCloud, loadFromCloud } from "../supabase";   // ADD THIS
+import { supabase, saveToCloud, loadFromCloud } from "../../src/supabase";   // ADD THIS
 
 
 import warrior from '../assets/warrior.png';
@@ -41,6 +41,7 @@ const CLASSES = {
             { id: 'shadow', name: 'Shadow Strike', level: 3, cost: 20, cd: 3, dmgMult: 2.0, desc: 'Guaranteed Critical Hit', effect: 'crit' },
             { id: 'assassinate', name: 'Assassinate', level: 7, cost: 40, cd: 4, dmgMult: 3.5, desc: 'Deadly precision attack' }
         ]
+        
     },
     mage: {
         id: 'mage', name: 'Mage', hpBonus: -10, manaBonus: 60, dmgBonus: 8, defBonus: -1, critChance: 0.10,
@@ -159,14 +160,14 @@ const ITEM_IMAGES = {
     'tavern': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/3llbtwwc9ihak8hh6xc1wqp9ef0s',
     'alchemist': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/d9aa4abhlup1ehdzbic4b3xanr2g',
     'arena': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/gafv8hvlo9w6tqot95smu2pdbwef',
-    'hammer': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/uj9bs094jggo7sprmkkahlcdeunx',
+    
     
     // --- BACKGROUNDS (FANTASY THEMED) ---
-    'town_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/a0r571c35w78i8q28q0i99a0937n', // Medieval Town
-    'forest_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/t5l7r42t9v07k8z58t9t6r912v6q', // Deep Forest
-    'cave_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/9t0n7f3w6x44k9p8z0z3v4f79s4g', // Crystal Cave
-    'dungeon_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/v1k2l3z4m5n6o7p8q9r0s1t2u3v4', // Shadow Dungeon
-    'mountain_background': 'https://imgproxy.attic.sh/insecure/f:png/plain/https://attic.sh/x1y2z3a4b5c6d7e8f9g0h1i2j3k4', // Dragon Mountain
+    'town_background': 'https://assetstorev1-prd-cdn.unity3d.com/package-screenshot/21520d19-2490-4cc0-a89c-a768de07ed62_scaled.jpg', // Medieval Town
+    'forest_background': 'https://t4.ftcdn.net/jpg/08/28/98/51/360_F_828985134_K5CljQcTHZvgIs9XheaQj61qPWE7duDV.jpg', // Deep Forest
+    'cave_background': 'https://assetstorev1-prd-cdn.unity3d.com/package-screenshot/895cac83-f8bc-4480-9960-c560e8bcf382_scaled.jpg', // Crystal Cave
+    'dungeon_background': 'https://assetstorev1-prd-cdn.unity3d.com/package-screenshot/01b00fd8-f144-49e0-b095-e8f6344ba035_scaled.jpg',
+    'mountain_background': 'https://thumbs.dreamstime.com/b/majestic-blue-dragon-asleep-snowy-mountain-peak-under-starry-night-sky-pixel-art-depicting-serene-resting-atop-snow-covered-377032068.jpg', // Dragon Mountain
 };
 
 const ENEMY_IMAGES = {
@@ -1592,14 +1593,14 @@ export default function App({ initialPlayer }) {
                             <button
                                 key={cls.id}
                                 onClick={() => selectClass(cls.id)}
-                                className="bg-stone-800 p-6 rounded-xl border-4 border-stone-700 hover:border-amber-500 transition-all flex flex-col items-center text-center group relative overflow-hidden shadow-2xl shadow-black/50 hover:scale-[1.02]"
+                                className="bg-stone-800 animate-forge-glow p-6 rounded-xl border-4 border-stone-700 hover:border-amber-500 transition-all flex flex-col items-center text-center group relative overflow-hidden shadow-2xl shadow-black/50 hover:scale-[1.02]"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent"></div>
                                 <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500 z-10">
                                     <img
                                         src={cls.image}
                                         alt={cls.name}
-                                        className="w-60 h-60 object-contain drop-shadow-xl" 
+                                        className="w-60 h-60 float-animation object-contain drop-shadow-xl" 
                                     />
                                 </div>
                                 <h2 className="text-3xl font-extrabold mb-2 text-amber-400 z-10">{cls.name}</h2>
@@ -1635,9 +1636,18 @@ export default function App({ initialPlayer }) {
 
     return (
         // Main Container: flex-col on mobile, flex-row on desktop
-        <div className={`h-screen bg-stone-900 text-stone-300 font-serif flex flex-col md:flex-row overflow-hidden ${shake ? 'animate-shake' : ''}`}>
+        <div className={`h-screen bg-stone-900 text-stone-300 font-retro flex flex-col md:flex-row overflow-hidden ${shake ? 'animate-shake' : ''}`}>
 
             <style>{`
+
+                    @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+            .font-retro {
+                    font-family: 'Pixelify Sans';
+                    font-weight: 400; 
+                    text-rendering: optimizeLegibility;
+                    -webkit-font-smoothing: none; 
+                    -moz-osx-font-smoothing: none;
+                }
                 @keyframes shake {
                   0% { transform: translate(1px, 1px) rotate(0deg); }
                   10% { transform: translate(-1px, -2px) rotate(-1deg); }
