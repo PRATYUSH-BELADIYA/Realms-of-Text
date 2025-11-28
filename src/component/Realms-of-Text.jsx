@@ -271,10 +271,10 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
 
     const renderInventory = () => (
         <div className="flex flex-col h-full">
-            <div className="flex justify-between items-center mb-4 border-b border-amber-900 pb-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-amber-900 pb-2">
                 <h3 className="text-xl font-bold text-amber-300 flex items-center gap-2"><Backpack className="w-6 h-6" /> Inventory ({player.inventory.reduce((acc, i) => acc + i.count, 0)} Items)</h3>
                 {location.id === 'town' && player.inventory.length > 0 && (
-                    <button onClick={sellAllLoot} className="text-xs bg-red-800 px-3 py-1 rounded hover:bg-red-700 border border-red-900 font-bold">
+                    <button onClick={sellAllLoot} className="text-xs mt-2 sm:mt-0 bg-red-800 px-3 py-1 rounded hover:bg-red-700 border border-red-900 font-bold">
                         Sell All Loot ({player.inventory.reduce((a, b) => a + (calculateItemValue(b) * b.count), 0)}G)
                     </button>
                 )}
@@ -353,7 +353,7 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
                     Hero Discount Active: All prices halved!
                 </div>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto flex-1 custom-scrollbar pb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 overflow-y-auto flex-1 custom-scrollbar pb-4">
                 {SHOP_ITEMS.map(item => {
                     if (item.classReq && item.classReq !== 'all' && item.classReq !== player.class) return null;
                     const visual = getItemImage(item.name);
@@ -394,10 +394,10 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
             </h2>
 
             {/* --- TAB TOGGLES --- */}
-            <div className="flex gap-2 mb-6 bg-stone-800 p-1 rounded-lg border border-stone-700">
+            <div className="flex gap-2 mb-6 bg-stone-800 p-1 rounded-lg border border-stone-700 w-full max-w-sm">
                 <button
                     onClick={() => setForgeMode('UPGRADE')}
-                    className={`px-4 py-2 text-sm rounded transition-all ${forgeMode === 'UPGRADE'
+                    className={`px-3 py-2 text-xs sm:text-sm rounded transition-all flex-1 ${forgeMode === 'UPGRADE'
                         ? 'bg-stone-600 text-white font-bold shadow-md'
                         : 'text-stone-400 hover:text-stone-200'
                         }`}
@@ -406,12 +406,12 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
                 </button>
                 <button
                     onClick={() => setForgeMode('ENCHANT')}
-                    className={`px-4 py-2 text-sm rounded transition-all flex gap-1 items-center ${forgeMode === 'ENCHANT'
+                    className={`px-3 py-2 text-xs sm:text-sm rounded transition-all flex-1 flex gap-1 items-center justify-center ${forgeMode === 'ENCHANT'
                         ? 'bg-purple-900/50 text-purple-200 font-bold shadow-md border border-purple-500/30'
                         : 'text-stone-400 hover:text-purple-300'
                         }`}
                 >
-                    <Sparkles className="w-4 h-4" /> Enchant (Reroll Effect)
+                    <Sparkles className="w-4 h-4" /> Enchant
                 </button>
             </div>
 
@@ -425,7 +425,7 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
                             setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, weapon: { ...p.equipment.weapon, level: p.equipment.weapon.level + 1, damage: p.equipment.weapon.damage + 3 } } }));
                             addLog(`Upgraded Weapon to +${player.equipment.weapon.level + 1}!`, 'success');
                         } else addLog(`Need ${cost} Gold`, 'error');
-                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
+                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center w-full md:min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
                         <img src={getItemImage(player.equipment.weapon.name, player.equipment.weapon.rarity)} alt="Weapon" className="w-16 h-16 rounded-sm mb-2 border border-stone-600" />
                         <div className="text-lg font-bold text-amber-400 mb-1">Refine Weapon</div>
                         <div className="text-xs text-stone-400 mb-2">Lvl {player.equipment.weapon.level} - Lvl {player.equipment.weapon.level + 1} (+3 Dmg)</div>
@@ -439,7 +439,7 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
                             setPlayer(p => ({ ...p, gold: p.gold - cost, equipment: { ...p.equipment, armor: { ...p.equipment.armor, level: p.equipment.armor.level + 1, defense: p.equipment.armor.defense + 2 } } }));
                             addLog(`Upgraded Armor to +${player.equipment.armor.level + 1}!`, 'success');
                         } else addLog(`Need ${cost} Gold`, 'error');
-                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
+                    }} className="bg-stone-800 p-4 rounded-xl border-2 border-amber-700 flex flex-col items-center w-full md:min-w-[180px] transition-colors hover:bg-stone-700/70 shadow-lg shadow-black/30 animate-forge-glow active:scale-[0.98]">
                         <img src={getItemImage(player.equipment.armor.name, player.equipment.armor.rarity)} alt="Armor" className="w-16 h-16 rounded-sm mb-2 border border-stone-600" />
                         <div className="text-lg font-bold text-amber-400 mb-1">Refine Armor</div>
                         <div className="text-xs text-stone-400 mb-2">Lvl {player.equipment.armor.level} - Lvl {player.equipment.armor.level + 1} (+2 Def)</div>
@@ -450,23 +450,23 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
 
             {/* --- ENCHANT SECTION --- */}
             {forgeMode === 'ENCHANT' && (
-                <div className="bg-stone-800 p-6 rounded-xl border-4 border-purple-500/50 w-full max-w-xl mb-4 animate-in slide-in-from-right-4 duration-300 shadow-2xl shadow-purple-900/30 animate-purple-pulse">
+                <div className="bg-stone-800 p-4 sm:p-6 rounded-xl border-4 border-purple-500/50 w-full max-w-xl mb-4 animate-in slide-in-from-right-4 duration-300 shadow-2xl shadow-purple-900/30 animate-purple-pulse">
                     <div className="text-center text-purple-300 font-bold text-lg mb-4 flex items-center justify-center gap-2 border-b border-purple-900 pb-2">
                         <Sparkles className="w-5 h-5" /> Mystical Enchantment (200 G Per Attempt)
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <button onClick={() => handleEnchant('weapon')} className="bg-stone-700 hover:bg-stone-600 p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
+                        <button onClick={() => handleEnchant('weapon')} className="bg-stone-700 hover:bg-stone-600 p-3 sm:p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
                             <div className="text-xs text-stone-400">Weapon Effect</div>
-                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap text-sm sm:text-base">
                                 {weaponEnchant ? weaponEnchant.name : 'None'}
                             </div>
                             <div className="text-xs text-stone-500 h-4 overflow-hidden">{weaponEnchant?.desc || 'No active magic'}</div>
                             <div className="mt-3 text-amber-500 font-bold text-sm group-hover:scale-105 transition-transform">Enchant Weapon</div>
                         </button>
 
-                        <button onClick={() => handleEnchant('armor')} className="bg-stone-700 hover:bg-stone-600 p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
+                        <button onClick={() => handleEnchant('armor')} className="bg-stone-700 hover:bg-stone-600 p-3 sm:p-4 rounded border-2 border-purple-700 group relative overflow-hidden transition-all active:scale-[0.98]">
                             <div className="text-xs text-stone-400">Armor Effect</div>
-                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap">
+                            <div className="font-bold text-purple-300 h-6 overflow-hidden text-ellipsis whitespace-nowrap text-sm sm:text-base">
                                 {armorEnchant ? armorEnchant.name : 'None'}
                             </div>
                             <div className="text-xs text-stone-500 h-4 overflow-hidden">{armorEnchant?.desc || 'No active magic'}</div>
@@ -530,8 +530,8 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
         <div className="w-full h-full flex flex-col">
             <h3 className="text-xl font-bold text-yellow-500 mb-4 border-b border-amber-900 pb-2 flex items-center gap-2"><Scroll className="w-6 h-6" /> Town Notice Board</h3>
 
-            <div className="flex gap-4 mb-4 justify-center">
-                <button onClick={generateRandomQuests} className="text-sm bg-amber-600/50 px-4 py-2 rounded hover:bg-amber-600/70 border border-amber-500 font-bold active:scale-[0.98]">Refresh Notices (New Quests)</button>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 justify-center">
+                <button onClick={generateRandomQuests} className="text-sm bg-amber-600/50 px-4 py-2 rounded hover:bg-amber-600/70 border border-amber-500 font-bold active:scale-[0.98]">Refresh Notices</button>
                 <button onClick={() => checkQuestCompletion()} className="text-sm bg-blue-600 px-4 py-2 rounded hover:bg-blue-500 font-bold border border-blue-700 active:scale-[0.98]">Claim Rewards</button>
             </div>
 
@@ -539,9 +539,9 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
                 {availableQuests.length === 0 ? <div className="text-stone-500 text-center col-span-2 py-6">The board is empty. Try refreshing the notices.</div> :
                     availableQuests.map(q => (
                         <button key={q.id} onClick={() => acceptQuest(q)} className="bg-amber-900/30 border-2 border-amber-700 p-4 rounded text-left hover:bg-amber-900/50 transition-colors group shadow-lg shadow-black/20 active:scale-[0.98]">
-                            <div className="font-bold text-xl text-amber-300 group-hover:text-amber-100">{q.type === 'kill' ? 'WANTED: ' : 'REQUEST: '} {q.target}</div>
-                            <div className="text-sm text-stone-400 mb-2">{q.type === 'kill' ? `Hunt ${q.required} targets` : `Gather ${q.required} items`}</div>
-                            <div className="text-lg text-yellow-200 font-extrabold flex items-center gap-3">
+                            <div className="font-bold text-lg text-amber-300 group-hover:text-amber-100">{q.type === 'kill' ? 'WANTED: ' : 'REQUEST: '} {q.target}</div>
+                            <div className="text-xs sm:text-sm text-stone-400 mb-2">{q.type === 'kill' ? `Hunt ${q.required} targets` : `Gather ${q.required} items`}</div>
+                            <div className="text-base sm:text-lg text-yellow-200 font-extrabold flex items-center gap-3">
                                 <Coins className='w-4 h-4' /> {q.rewardGold} G 
                                 <Gem className='w-4 h-4' /> {q.rewardXp} XP
                             </div>
@@ -557,13 +557,13 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
             <h3 className="text-xl font-bold text-amber-300 mb-6 border-b border-amber-900 pb-2 flex items-center justify-center gap-2"><Beer className="w-6 h-6" /> The Rusty Tankard</h3>
             
             <div className="flex flex-col md:flex-row gap-6 justify-center items-center flex-1">
-                <button onClick={handleRest} className="bg-green-800/40 hover:bg-green-800/60 p-6 rounded-xl border-2 border-green-600 flex flex-col items-center min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
+                <button onClick={handleRest} className="bg-green-800/40 hover:bg-green-800/60 p-6 rounded-xl border-2 border-green-600 flex flex-col items-center w-full md:min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
                     <Heart className='w-8 h-8 mb-2 text-red-400' />
                     <div className="text-xl font-bold mb-1">Rest</div>
                     <div className="text-sm text-green-300 mb-3">Restore All HP/Mana</div>
                     <div className="text-amber-400 font-bold text-lg">50 G</div>
                 </button>
-                <button onClick={handleGamble} className="bg-amber-800/40 hover:bg-amber-800/60 p-6 rounded-xl border-2 border-amber-600 flex flex-col items-center min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
+                <button onClick={handleGamble} className="bg-amber-800/40 hover:bg-amber-800/60 p-6 rounded-xl border-2 border-amber-600 flex flex-col items-center w-full md:min-w-[160px] shadow-lg shadow-black/30 active:scale-[0.98]">
                     <Dices className='w-8 h-8 mb-2 text-stone-300' />
                     <div className="text-xl font-bold mb-1">Gamble</div>
                     <div className="text-sm text-amber-300 mb-3">Roll Dice (Win 7+)</div>
@@ -600,8 +600,9 @@ const GameModal = ({ gameState, setGameState, player, setPlayer, totalMaxHp, tot
     }
 
     return (
-        <div className="fixed inset-0 bg-black/80 z-40 flex items-center justify-center p-4 animate-in fade-in duration-300">
-            <div className="bg-stone-900 border-4 border-amber-700 shadow-2xl shadow-black/80 rounded-xl w-full max-w-4xl h-[85vh] p-6 text-stone-300 relative animate-in zoom-in duration-300">
+        // Adjusted padding and max-width for better mobile experience
+        <div className="fixed inset-0 bg-black/80 z-40 flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
+            <div className="bg-stone-900 border-4 border-amber-700 shadow-2xl shadow-black/80 rounded-xl w-full max-w-lg md:max-w-4xl h-[95vh] sm:h-[85vh] p-4 sm:p-6 text-stone-300 relative animate-in zoom-in duration-300">
                 {renderContent()}
             </div>
         </div>
@@ -1586,26 +1587,26 @@ export default function App({ initialPlayer }) {
         return (
             <div className="min-h-screen bg-stone-900 text-stone-200 flex items-center justify-center p-4 font-serif">
                 <div className="max-w-5xl w-full">
-                    <h1 className="text-5xl font-bold text-center mb-10 text-amber-500 drop-shadow-lg">Choose Your Destiny</h1>
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <h1 className="text-4xl sm:text-5xl font-bold text-center mb-6 sm:mb-10 text-amber-500 drop-shadow-lg">Choose Your Destiny</h1>
+                    <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
                         {Object.values(CLASSES).map(cls => (
 
                             <button
                                 key={cls.id}
                                 onClick={() => selectClass(cls.id)}
-                                className="bg-stone-800 animate-forge-glow p-6 rounded-xl border-4 border-stone-700 hover:border-amber-500 transition-all flex flex-col items-center text-center group relative overflow-hidden shadow-2xl shadow-black/50 hover:scale-[1.02]"
+                                className="bg-stone-800 animate-forge-glow p-4 sm:p-6 rounded-xl border-4 border-stone-700 hover:border-amber-500 transition-all flex flex-col items-center text-center group relative overflow-hidden shadow-2xl shadow-black/50 hover:scale-[1.02]"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent"></div>
-                                <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500 z-10">
+                                <div className="mb-2 sm:mb-4 transform group-hover:scale-110 transition-transform duration-500 z-10">
                                     <img
                                         src={cls.image}
                                         alt={cls.name}
-                                        className="w-60 h-60 float-animation object-contain drop-shadow-xl" 
+                                        className="w-40 h-40 sm:w-60 sm:h-60 float-animation object-contain drop-shadow-xl" 
                                     />
                                 </div>
-                                <h2 className="text-3xl font-extrabold mb-2 text-amber-400 z-10">{cls.name}</h2>
-                                <p className="text-stone-400 mb-6 text-sm h-10 z-10">{cls.desc}</p>
-                                <div className="w-full bg-stone-900/70 p-4 rounded text-sm space-y-2 border-t border-stone-700 z-10">
+                                <h2 className="text-xl sm:text-3xl font-extrabold mb-1 text-amber-400 z-10">{cls.name}</h2>
+                                <p className="text-stone-400 mb-4 text-xs sm:text-sm h-8 z-10">{cls.desc}</p>
+                                <div className="w-full bg-stone-900/70 p-3 sm:p-4 rounded text-xs sm:text-sm space-y-1 sm:space-y-2 border-t border-stone-700 z-10">
                                     <div className="flex justify-between">
                                         <span>HP Bonus:</span>
                                         <span className={cls.hpBonus >= 0 ? "text-red-400 font-bold" : "text-red-600 font-bold"}>
@@ -1688,11 +1689,11 @@ export default function App({ initialPlayer }) {
             `}</style>
 
 
-            {/* A. STATS PANEL (Left Fixed Column - Hidden/Full-width on Mobile) */}
+            {/* A. STATS PANEL (Left Fixed Column - Hidden/Full-height on Mobile for its view) */}
             <div className={`
                 md:w-80 w-full md:flex flex-col gap-4 shrink-0 z-20 overflow-y-auto custom-scrollbar 
                 bg-stone-800/80 backdrop-blur-sm p-4 border-r-4 border-amber-900 shadow-2xl shadow-black/80
-                ${mobileView !== 'stats' && 'hidden md:flex'} 
+                ${mobileView !== 'stats' ? 'hidden md:flex' : 'flex-1'} 
             `}>
                 
                 {/* Dynamic Player Stats Block */}
@@ -1816,18 +1817,18 @@ export default function App({ initialPlayer }) {
             </div>
 
             {/* B. MAIN LOG & SCENE (Center Column - Takes up all vertical space when active) */}
-            <div className={`flex-1 flex flex-col relative overflow-hidden ${mobileView !== 'log' && 'hidden md:flex'}`}>
+            <div className={`flex-1 flex flex-col relative overflow-hidden pb-16 md:pb-0 ${mobileView !== 'log' && 'hidden md:flex'}`}>
                 
                 {/* Scene Visuals (Height reduced for mobile) */}
                 <div 
-                    className="h-[30vh] md:h-[40vh] bg-cover bg-center border-b-4 border-amber-900 shadow-xl shadow-black/50 flex items-center justify-center relative shrink-0"
+                    className="h-[25vh] sm:h-[30vh] md:h-[40vh] bg-cover bg-center border-b-4 border-amber-900 shadow-xl shadow-black/50 flex items-center justify-center relative shrink-0"
                     style={{ backgroundImage: `url(${getBackgroundUrl(location.id)})` }}
                 >
                     {/* Floating Combat Text Layer (Dynamic) */}
                     <div className="absolute inset-0 pointer-events-none z-50 overflow-hidden">
                         {floatingTexts.map(ft => (
                             <div key={ft.id}
-                                className={`absolute text-2xl font-black animate-bounce ${ft.color}`}
+                                className={`absolute text-xl sm:text-2xl font-black animate-bounce ${ft.color}`}
                                 style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
                             >
                                 {ft.text}
@@ -1835,7 +1836,7 @@ export default function App({ initialPlayer }) {
                         ))}
                     </div>
 
-                    <div className="z-10 text-center w-full max-w-xl p-4 bg-black/40 rounded-xl">
+                    <div className="z-10 text-center w-full max-w-xl p-3 sm:p-4 bg-black/40 rounded-xl">
                         {/* Dynamic Combat Rendering */}
                         {gameState === 'COMBAT' && enemy && (
                             <div className="animate-in fade-in zoom-in duration-300 flex flex-col items-center">
@@ -1850,20 +1851,20 @@ export default function App({ initialPlayer }) {
                                             <img
                                                 src={imageUrl}
                                                 alt={enemy.name}
-                                                className={`w-40 h-40 object-contain ${enemy.isElite ? 'scale-110' : ''}`}
+                                                className={`w-32 h-32 sm:w-40 sm:h-40 object-contain ${enemy.isElite ? 'scale-110' : ''}`}
                                             />
                                             {enemy.isElite && <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full -z-10 animate-pulse"></div>}
                                         </div>
                                     ) : (
-                                        <div className={`text-7xl mb-3 ${enemy.isElite ? 'animate-pulse' : ''}`}>
+                                        <div className={`text-5xl sm:text-7xl mb-3 ${enemy.isElite ? 'animate-pulse' : ''}`}>
                                             {enemy.isBoss ? '👹' : '👾'}
                                         </div>
                                     );
                                 })()}
 
                                 {/* Dynamic Enemy Stats */}
-                                <div className={`text-2xl font-bold ${enemy.isElite ? 'text-red-400' : 'text-red-200'}`}>
-                                    {enemy.name} <span className="text-sm bg-stone-800 px-2 rounded-full text-stone-400">Lvl {enemy.level}</span>
+                                <div className={`text-xl sm:text-2xl font-bold ${enemy.isElite ? 'text-red-400' : 'text-red-200'}`}>
+                                    {enemy.name} <span className="text-xs bg-stone-800 px-2 rounded-full text-stone-400">Lvl {enemy.level}</span>
                                 </div>
                                 <div className="w-full bg-stone-800 h-4 mt-2 rounded-full overflow-hidden border border-red-900 relative max-w-[300px] shadow-inner">
                                     <div className="bg-red-600 h-full transition-all duration-300" style={{ width: `${Math.max(0, (enemy.hp / enemy.maxHp) * 100)}%` }}></div>
@@ -1877,26 +1878,26 @@ export default function App({ initialPlayer }) {
                         {/* Dynamic Interactive Event Rendering */}
                         {gameState === 'INTERACTIVE_EVENT' && activeEvent && (
                             <div className="flex flex-col items-center animate-in zoom-in duration-300">
-                                <img src={getItemImage(activeEvent.image)} alt={activeEvent.title} className="w-20 h-20 rounded-xl border-4 border-amber-500 mb-3 shadow-2xl shadow-black/50" />
-                                <h2 className="text-3xl font-bold text-amber-400">{activeEvent.title}</h2>
-                                <p className="text-stone-300 text-base mt-2 max-w-md">{activeEvent.desc}</p>
+                                <img src={getItemImage(activeEvent.image)} alt={activeEvent.title} className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-4 border-amber-500 mb-3 shadow-2xl shadow-black/50" />
+                                <h2 className="text-xl sm:text-3xl font-bold text-amber-400">{activeEvent.title}</h2>
+                                <p className="text-stone-300 text-sm sm:text-base mt-2 max-w-md">{activeEvent.desc}</p>
                             </div>
                         )}
                         {/* Dynamic Town Buildings Visuals (for flavor only) */}
                         {['TAVERN', 'ALCHEMIST', 'ARENA_LOBBY', 'QUEST_BOARD', 'SHOP', 'BLACKSMITH'].includes(gameState) && (
-                             <div className="text-stone-400 text-xl font-bold">
+                             <div className="text-stone-400 text-sm sm:text-xl font-bold">
                                  {location.name} - {LOCATIONS.find(l => l.id === location.id)?.desc}
                              </div>
                         )}
-                        {gameState === 'IDLE' && <div className="text-3xl text-amber-500 italic font-bold drop-shadow-lg">Adventure Awaits...</div>}
+                        {gameState === 'IDLE' && <div className="text-xl sm:text-3xl text-amber-500 italic font-bold drop-shadow-lg">Adventure Awaits...</div>}
                     </div>
                 </div>
 
                 {/* Logs - NARRATIVE SCROLL */}
-                <div className="flex-1 overflow-y-auto p-5 bg-parchment-texture text-stone-900 relative shadow-inner shadow-black/50 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 bg-parchment-texture text-stone-900 relative shadow-inner shadow-black/50 custom-scrollbar">
                     <div className="relative z-10 space-y-2">
                         {logs.map((log) => (
-                            <div key={log.id} className={`p-2 rounded text-sm border-l-4 animate-fade-in ${log.type === 'danger' ? 'bg-red-100/50 border-red-700 text-red-800 font-bold' :
+                            <div key={log.id} className={`p-2 rounded text-xs sm:text-sm border-l-4 animate-fade-in ${log.type === 'danger' ? 'bg-red-100/50 border-red-700 text-red-800 font-bold' :
                                 log.type === 'success' ? 'bg-green-100/50 border-green-700 text-green-800' :
                                     log.type === 'warning' ? 'bg-yellow-100/50 border-yellow-700 text-yellow-800' :
                                         log.type === 'system' ? 'bg-stone-100/50 border-stone-700 text-stone-600 italic' :
@@ -1910,21 +1911,21 @@ export default function App({ initialPlayer }) {
                 </div>
 
                 {/* Controls Area (Dynamic Controls based on gameState) - BOTTOM CENTER */}
-                <div className="bg-stone-800/90 backdrop-blur-md p-4 border-t-4 border-amber-900 min-h-[120px] shrink-0 z-10">
+                <div className="bg-stone-800/90 backdrop-blur-md p-3 sm:p-4 border-t-4 border-amber-900 min-h-[120px] shrink-0 z-10 md:static fixed bottom-16 left-0 right-0">
                     {gameState === 'COMBAT' && (
                         <div className="w-full max-w-4xl mx-auto">
                             {/* Dynamic Skill Bar */}
-                            <div className="grid grid-cols-5 gap-3">
+                            <div className="grid grid-cols-5 gap-2 sm:gap-3">
                                 {/* Potions Slots */}
-                                <button onClick={() => usePotion('hp')} className="bg-stone-700 hover:bg-red-800/70 p-3 rounded-xl border-2 border-red-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
-                                    <Heart className="w-6 h-6 text-red-500" />
-                                    <span className="text-xs font-bold absolute bottom-1 right-2 bg-stone-900 px-2 rounded-full">{player.potions}</span>
-                                    <span className='text-[10px]'>Health Pot</span>
+                                <button onClick={() => usePotion('hp')} className="bg-stone-700 hover:bg-red-800/70 p-2 sm:p-3 rounded-xl border-2 border-red-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
+                                    <Heart className="w-5 h-5 text-red-500" />
+                                    <span className="text-xs font-bold absolute bottom-0 right-1 sm:bottom-1 sm:right-2 bg-stone-900 px-2 rounded-full">{player.potions}</span>
+                                    <span className='text-[8px] sm:text-[10px]'>Health Pot</span>
                                 </button>
-                                <button onClick={() => usePotion('mana')} className="bg-stone-700 hover:bg-blue-800/70 p-3 rounded-xl border-2 border-blue-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
-                                    <Flame className="w-6 h-6 text-blue-500" />
-                                    <span className="text-xs font-bold absolute bottom-1 right-2 bg-stone-900 px-2 rounded-full">{player.manaPotions}</span>
-                                    <span className='text-[10px]'>Mana Pot</span>
+                                <button onClick={() => usePotion('mana')} className="bg-stone-700 hover:bg-blue-800/70 p-2 sm:p-3 rounded-xl border-2 border-blue-900 flex flex-col items-center relative transition-all active:scale-95 shadow-md">
+                                    <Flame className="w-5 h-5 text-blue-500" />
+                                    <span className="text-xs font-bold absolute bottom-0 right-1 sm:bottom-1 sm:right-2 bg-stone-900 px-2 rounded-full">{player.manaPotions}</span>
+                                    <span className='text-[8px] sm:text-[10px]'>Mana Pot</span>
                                 </button>
 
                                 {/* Dynamic Class Skills Rendering */}
@@ -1939,7 +1940,7 @@ export default function App({ initialPlayer }) {
                                             disabled={isLocked || onCooldown || noMana}
                                             onClick={() => performAttack(skill)}
                                             className={`
-                                                p-3 rounded-xl border-2 relative flex flex-col items-center justify-center transition-all shadow-md
+                                                p-2 sm:p-3 rounded-xl border-2 relative flex flex-col items-center justify-center transition-all shadow-md
                                                 ${isLocked ? 'bg-stone-800 border-stone-700 opacity-50 cursor-not-allowed' :
                                                 onCooldown ? 'bg-stone-800 border-red-900 cursor-wait' :
                                                     noMana ? 'bg-stone-800 border-blue-900 opacity-80 cursor-not-allowed' :
@@ -1947,13 +1948,13 @@ export default function App({ initialPlayer }) {
                                             `}
                                             title={isLocked ? `Unlocks at Lvl ${skill.level}` : skill.desc}
                                         >
-                                            {isLocked ? <span className="text-sm text-stone-500">Lvl {skill.level}</span> : (
+                                            {isLocked ? <span className="text-xs text-stone-500">Lvl {skill.level}</span> : (
                                                 <>
-                                                    <div className="font-bold text-sm text-center leading-tight mb-1">{skill.name}</div>
-                                                    <div className="text-xs text-blue-300">{skill.cost} MP | {skill.cd > 0 ? `${skill.cd} CD` : 'Basic'}</div>
+                                                    <div className="font-bold text-xs sm:text-sm text-center leading-tight mb-0.5">{skill.name}</div>
+                                                    <div className="text-[8px] sm:text-xs text-blue-300">{skill.cost} MP | {skill.cd > 0 ? `${skill.cd} CD` : 'Basic'}</div>
                                                     {/* Dynamic Cooldown Indicator */}
                                                     {onCooldown && (
-                                                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center rounded-xl font-bold text-red-400 text-2xl">
+                                                        <div className="absolute inset-0 bg-black/70 flex items-center justify-center rounded-xl font-bold text-red-400 text-xl sm:text-2xl">
                                                             {player.cooldowns[skill.id]}
                                                         </div>
                                                     )}
@@ -1968,15 +1969,15 @@ export default function App({ initialPlayer }) {
 
                     {gameState === 'INTERACTIVE_EVENT' && activeEvent && (
                         <div className="flex flex-col items-center justify-center gap-3 w-full max-w-2xl mx-auto">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 w-full">
                                 {/* Dynamic Event Choices */}
                                 {activeEvent.choices.map((choice, idx) => (
                                     <button 
                                         key={idx} 
                                         onClick={() => resolveEvent(choice)} 
-                                        className="bg-stone-700 hover:bg-amber-900/50 border-2 border-amber-500 p-4 rounded-xl flex flex-col items-center justify-center gap-1 group shadow-lg active:scale-[0.98]"
+                                        className="bg-stone-700 hover:bg-amber-900/50 border-2 border-amber-500 p-2 sm:p-4 rounded-xl flex flex-col items-center justify-center gap-1 group shadow-lg active:scale-[0.98]"
                                     >
-                                        <div className="font-bold text-lg group-hover:text-amber-300">{choice.text}</div>
+                                        <div className="font-bold text-sm sm:text-lg group-hover:text-amber-300">{choice.text}</div>
                                         {choice.chance < 1.0 && <div className="text-xs text-red-400">Risk: {(100 - choice.chance * 100).toFixed(0)}% Fail</div>}
                                     </button>
                                 ))}
@@ -1985,17 +1986,17 @@ export default function App({ initialPlayer }) {
                     )}
 
                     {gameState === 'ARENA_LOBBY' && (
-                        <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
+                        <div className="flex flex-col gap-3 sm:gap-4 justify-center items-center h-full w-full">
                             <div className="text-center">
-                                <div className="text-4xl font-extrabold text-red-500">WAVE {arenaWave}</div>
-                                <div className="text-stone-400">Difficulty Multiplier: x{(1 + (arenaWave * 0.2)).toFixed(1)}</div>
+                                <div className="text-2xl sm:text-4xl font-extrabold text-red-500">WAVE {arenaWave}</div>
+                                <div className="text-stone-400 text-sm">Difficulty Multiplier: x{(1 + (arenaWave * 0.2)).toFixed(1)}</div>
                             </div>
-                            <div className="flex gap-6">
-                                <button onClick={() => generateEnemy('arena')} className="bg-red-800 hover:bg-red-700 p-4 rounded-xl border-4 border-red-500 flex flex-col items-center min-w-[200px] animate-pulse shadow-2xl shadow-red-900/50 active:scale-[0.98]">
-                                    <Swords className="w-10 h-10 mb-2" />
-                                    <div className="text-2xl font-bold">ENTER ARENA</div>
+                            <div className="flex gap-4 sm:gap-6">
+                                <button onClick={() => generateEnemy('arena')} className="bg-red-800 hover:bg-red-700 p-3 sm:p-4 rounded-xl border-4 border-red-500 flex flex-col items-center min-w-[120px] sm:min-w-[200px] animate-pulse shadow-2xl shadow-red-900/50 active:scale-95">
+                                    <Swords className="w-8 h-8 sm:w-10 sm:h-10 mb-2" />
+                                    <div className="text-lg sm:text-2xl font-bold">ENTER ARENA</div>
                                 </button>
-                                <button onClick={() => { setArenaWave(1); setGameState('IDLE'); }} className="bg-stone-600 hover:bg-stone-500 px-6 py-4 rounded-xl border border-stone-500 active:scale-[0.98]">
+                                <button onClick={() => { setArenaWave(1); setGameState('IDLE'); }} className="bg-stone-600 hover:bg-stone-500 px-4 sm:px-6 py-3 sm:py-4 rounded-xl border border-stone-500 text-sm active:scale-[0.98]">
                                     Retreat (Reset Wave)
                                 </button>
                             </div>
@@ -2006,7 +2007,7 @@ export default function App({ initialPlayer }) {
                         <div className="flex flex-col gap-3">
                             {location.id !== 'town' ? (
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between text-sm text-stone-400 px-1">
+                                    <div className="flex justify-between text-xs text-stone-400 px-1">
                                         <span>Zone Cleared Progress</span>
                                         {/* Dynamic Progress Display */}
                                         <span>{player.zoneProgress[location.id] || 0}%</span>
@@ -2017,17 +2018,17 @@ export default function App({ initialPlayer }) {
                                     </div>
                                     {/* Dynamic Explore/Boss Button */}
                                     {(player.zoneProgress[location.id] || 0) >= 100 ? (
-                                        <button onClick={() => generateEnemy('boss')} className="w-full bg-purple-700 hover:bg-purple-600 text-white py-4 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-purple-900 flex justify-center items-center gap-3 animate-pulse border-4 border-purple-500 active:scale-95">
-                                            <Crown className="w-6 h-6" /> CHALLENGE BOSS
+                                        <button onClick={() => generateEnemy('boss')} className="w-full bg-purple-700 hover:bg-purple-600 text-white py-3 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-purple-900 flex justify-center items-center gap-3 animate-pulse border-4 border-purple-500 active:scale-95">
+                                            <Crown className="w-5 h-5 md:w-6 md:h-6" /> CHALLENGE BOSS
                                         </button>
                                     ) : (
-                                        <button onClick={explore} className="w-full bg-amber-600 hover:bg-amber-500 text-stone-900 py-4 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-amber-900 flex justify-center items-center gap-3 active:scale-95 transition-transform border-4 border-amber-400">
-                                            <Map className="w-6 h-6" /> EXPLORE WILDERNESS
+                                        <button onClick={explore} className="w-full bg-amber-600 hover:bg-amber-500 text-stone-900 py-3 rounded-xl font-extrabold text-lg md:text-2xl shadow-2xl shadow-amber-900 flex justify-center items-center gap-3 active:scale-95 transition-transform border-4 border-amber-400">
+                                            <Map className="w-5 h-5 md:w-6 md:h-6" /> EXPLORE WILDERNESS
                                         </button>
                                     )}
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-3 md:grid-cols-6 gap-3 pt-2">
+                                <div className="grid grid-cols-3 md:grid-cols-6 gap-2 pt-2">
                                     {/* Dynamic Town Hub Options */}
                                     {[
                                         { state: 'SHOP', name: 'Market', icon: ITEM_IMAGES.market },
@@ -2041,13 +2042,13 @@ export default function App({ initialPlayer }) {
                                             key={btn.state}
                                             onClick={() => setGameState(btn.state)}
                                             disabled={isSiegeActive && btn.state !== 'COMBAT'}
-                                            className={`bg-stone-700 p-3 rounded-xl border-2 border-stone-600 flex flex-col items-center group shadow-md transition-all active:scale-[0.98] ${isSiegeActive ? 'opacity-50 cursor-not-allowed' : 'hover:bg-stone-600 hover:border-amber-500'}`}
+                                            className={`bg-stone-700 p-2 rounded-xl border-2 border-stone-600 flex flex-col items-center group shadow-md transition-all active:scale-[0.98] ${isSiegeActive ? 'opacity-50 cursor-not-allowed' : 'hover:bg-stone-600 hover:border-amber-500'}`}
                                         >
-                                            <img src={btn.icon} alt={btn.name} className='w-8 h-8 mb-1' />
+                                            <img src={btn.icon} alt={btn.name} className='w-6 h-6 mb-0.5' />
                                             <span className="text-xs font-bold">{btn.name}</span>
                                         </button>
                                     ))}
-                                    <button onClick={explore} className="col-span-6 bg-stone-700 hover:bg-stone-600 py-3 rounded-xl font-bold border-2 border-stone-600 text-lg active:scale-[0.98]">Wander Town (Flavor)</button>
+                                    <button onClick={explore} className="col-span-3 md:col-span-6 bg-stone-700 hover:bg-stone-600 py-2 rounded-xl font-bold border-2 border-stone-600 text-sm active:scale-[0.98]">Wander Town (Flavor)</button>
                                 </div>
                             )}
 
@@ -2056,11 +2057,11 @@ export default function App({ initialPlayer }) {
                 </div>
             </div>
 
-            {/* C. NAVIGATION/MAP PANEL (Right Fixed Column - Hidden/Full-width on Mobile) */}
+            {/* C. NAVIGATION/MAP PANEL (Right Fixed Column - Hidden/Full-height on Mobile for its view) */}
             <div className={`
                 md:w-64 w-full md:flex flex-col gap-4 shrink-0 z-20 overflow-y-auto custom-scrollbar
                 bg-stone-800/80 backdrop-blur-sm p-4 border-l-4 border-amber-900 shadow-2xl shadow-black/80
-                ${mobileView !== 'map' && 'hidden md:flex'} 
+                ${mobileView !== 'map' ? 'hidden md:flex' : 'flex-1'} 
             `}>
                  <div className="bg-stone-700/50 p-3 rounded-xl shadow-lg border border-amber-700/50">
                     <div className="flex items-center gap-2 text-amber-500 font-bold mb-2 text-xl border-b border-stone-600 pb-2">
@@ -2127,7 +2128,7 @@ export default function App({ initialPlayer }) {
             </div>
 
             {/* NEW: MOBILE NAVIGATION BAR (Always visible on small screens) */}
-            <div className="md:hidden flex justify-around items-center h-16 bg-stone-900 border-t-4 border-amber-900 z-50 shrink-0">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 flex justify-around items-center h-16 bg-stone-900 border-t-4 border-amber-900 z-50 shrink-0">
                 <button
                     onClick={() => setMobileView('stats')}
                     className={`flex flex-col items-center text-xs font-bold p-1 rounded transition-colors active:scale-95 ${mobileView === 'stats' ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'}`}
@@ -2140,7 +2141,7 @@ export default function App({ initialPlayer }) {
                     className={`flex flex-col items-center text-xs font-bold p-1 rounded transition-colors active:scale-95 ${mobileView === 'log' ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'}`}
                 >
                     <Scroll className="w-5 h-5" />
-                    Log/Action
+                    Action
                 </button>
                 <button
                     onClick={() => setMobileView('map')}
